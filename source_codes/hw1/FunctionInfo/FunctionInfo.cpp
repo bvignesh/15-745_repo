@@ -1,5 +1,5 @@
 // 15-745 S15 Assignment 1: FunctionInfo.cpp
-// Group:vigneshb junhanz
+// Group:
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "llvm/Pass.h"
@@ -31,48 +31,50 @@ namespace {
       // outs() << "Name,\tArgs,\tCalls,\tBlocks,\tInsns\n";
       for (auto &F:M)
 	{
-		for(auto &B:F)
-			for(auto &I:B)
+			for(auto &B:F)
 				{
-					if (CallInst* CI = dyn_cast<CallInst>(&I))
-                        		{
-                                		Function* F_call = CI->getCalledFunction();
-                                		Call_map[F_call->getName()]++;
+						for(auto &I:B)
+						{
+							if (CallInst* CI = dyn_cast<CallInst>(&I))
+                        			{
+                                			Function* F_call = CI->getCalledFunction();  //capturing explicit function calls in bitcode
+                                			Call_map[F_call->getName()]++;  //The map structure maintains number of calls
 
-                                		//outs() << "encountered a call to " << F_call->getName() << " from " << F.getName() << "\n";
-                                		//outs() << "for the called function, Call_map = " << Call_map[F_call->getName()] << "\n";
-                        		}     
+                                	}
+						}
+				 }
+	}
+     
       return false;
     }
 
     // Print output for each function
     bool runOnFunction(Function &F) override {
-    //Call_map[F.getName()] = 0;
-    int bb_ctr = 0;
-    int inst_ctr = 0;
+    
+    int bb_ctr = 0;  //counter for number of basic blocks within a function
+    int inst_ctr = 0; //counter for number of instructions within a function
     for (auto &B:F)
 	{
-		bb_ctr++;
-		for (auto &I:B)
-		{
-			inst_ctr++;	
-		}
+			bb_ctr++;
+			for (auto &I:B)
+			{
+				inst_ctr++;	
+			}
 	}
     
-    int arg_no;		//string to hold the below case 
-    if (F.isVarArg())
-	arg_no = (int)'*';
-    else
-	arg_no = F.arg_size();
+  
 
-    int call_ctr = 0;
-    for (Function::use_iterator UI = F.use_begin(); UI != F.use_end(); ++UI)
-	call_ctr++;
+
+    int arg_no;			//variable that holds number of arguments to a function
+    if (F.isVarArg())
+	outs() << "name " << F.getName() << ",\t\t" << "args *,\t\t" << "calls " << Call_map[F.getName()] << ",\t\t" << "bbs " << bb_ctr << ",\t\t" << "insts " << inst_ctr << "\n";
+    else
+	{
+			arg_no = F.arg_size();
+			outs() << "name " << F.getName() << ",\t\t" << "args " << arg_no << ",\t\t" << "calls " << Call_map[F.getName()] << ",\t\t" << "bbs " << bb_ctr << ",\t\t" << "insts " << inst_ctr << "\n";	
     
-    outs() << "name" << F.getName() << ",\t" << "args " << arg_no  <<",\t" << "calls " << Call_map[F.getName()] << ",\t" << "bbs" << bb_ctr << ",\t" << "insts" << inst_ctr << "\n";
-    
-    outs() << "Call_map = " << Call_map[F.getName()] << "\n";
-      return false;
+   	} 
+    return false;
     }
   };
 }
