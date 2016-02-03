@@ -1,0 +1,10 @@
+For the LocalOpts pass, it is implemented as a BasicBlockPass. For each block given it scans through all the instructions forward and decides that if a constant fold, algebratic identity or strength reduction can be done on that instruction respectively. If the first two can be done, then the instruction would be removed from the instruction list and be replaced by a constant value or operand value while for strenght reduction the instruction would be replaced by another instruction of simplier strength. The iterator method used here is a self written one that first gets the next element in line and then process the current element so that in case the current element got removed the list can still be further traversed.
+All the optimizations are of instruction level and are only processed upon binary opeartions with two operands. The algebraic identity optimization is performed when one of the following are met:
+	1)Adding a variable with 0
+	2)Subtracting a variable by 0 or by itself
+	3)Multiplying by 0 or 1
+	4)Dividing by 1 or itself or dividing 0 (Including remainder operations)
+	5)Shifting by 0
+	6)Anding and Xoring with 0 or by itself
+	7)Oring with all ones or itself
+The constant folding optimization is performed when both of the oprands of the instruction are constant and that the instruction is not a floating point instruction. The Strength reduction optimization is performed when multiplying or dividing by a polynomial of two.
