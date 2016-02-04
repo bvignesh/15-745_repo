@@ -1,0 +1,7 @@
+The Function Info pass collects information about the functions in a module.
+
+This pass mostly uses the member functions of the Function object to gather different information
+
+The information about the number of call sites for each function uses the member function of the Instruction class. The number of call sites are determined at the Initialization function for the module under consideration. 
+
+The member functions used for collecting different information are marked in the source code with comments
