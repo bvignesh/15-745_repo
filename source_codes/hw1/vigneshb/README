@@ -1,0 +1,3 @@
+Please build the passes as stated in the handout. The build procedure for the LocalOpts pass is the same as the build procedure for the FunctionInfo pass.
+The pass name for Function Info is function-info
+The pass name for Local Optimization is local-opt
