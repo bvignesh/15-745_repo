@@ -1,0 +1,5 @@
+Group:junhanz vigneshb
+
+Please build the passes as stated in the handout. Run make to build both of the passes
+The pass name for Liveness is liveness
+The pass name for Available Expressions is available
