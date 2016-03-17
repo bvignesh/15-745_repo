@@ -1,0 +1,2 @@
+The passes can all be built by just running the Makefile.
+To run the LICM and DeadCodeElimination passes the passes in code have to gone through the mem2reg path.

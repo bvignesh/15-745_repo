@@ -1,0 +1,15 @@
+all: dominators.so LICM.so
+
+CXXFLAGS = -rdynamic $(shell llvm-config --cxxflags) -g -O0
+
+dataflow.o: dataflow.cpp dataflow.h
+
+dataflowBB.o: dataflowBB.cpp dataflowBB.h
+
+%.so: %.o dataflow.o dataflowBB.o
+	$(CXX) -dylib -shared $^ -o $@
+
+clean:
+	rm -f *.o *~ *.so
+
+.PHONY: clean all

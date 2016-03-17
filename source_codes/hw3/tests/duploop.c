@@ -1,0 +1,25 @@
+int multiply(int a, int b){
+	int i,j,k;
+	int t1,t2,t3,t4;
+	int answer=0;
+	int AisPos=0;
+	int BisPos;
+	for(i=0;i<a;i++){
+		t1=i+2;
+		t2=a+2;
+		for(j=0;j<b;j++){
+			t3=t1*5;
+			t4=t2<<2;
+			BisPos=t2/t1;
+			answer++;
+		}
+	}
+	k=t3+t4;
+	answer=answer*BisPos;
+	return answer;
+}
+
+
+int main(){
+	return multiply(42,24);
+}

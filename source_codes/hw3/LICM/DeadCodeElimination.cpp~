@@ -1,0 +1,72 @@
+// 15-745 S15 Assignment 1: FunctionInfo.cpp
+// Group:
+////////////////////////////////////////////////////////////////////////////////
+
+#include "llvm/Pass.h"
+#include "llvm/IR/Function.h"
+#include "llvm/IR/InstVisitor.h"
+#include "llvm/Support/raw_ostream.h"
+
+#include <iostream>
+#include <functional>
+
+using namespace llvm;
+
+namespace {
+  class DeadCodeElimination : public FunctionPass {
+  public:
+    static char ID;
+    DeadCodeElimination() : FunctionPass(ID) { }
+    ~DeadCodeElimination() { }
+
+    // We don't modify the structure of the program
+    void getAnalysisUsage(AnalysisUsage &AU) const override {
+      AU.setPreservesCFG();
+    }
+
+    // Do some initialization
+    bool doInitialization(Module &M) override {
+      return false;
+    }
+
+    // Print output for each function
+    bool runOnFunction(Function &F) override {
+    	bool changed=false;
+    	bool curChanged=true;
+    	while(curChanged){
+    		curChanged=false;
+    		std::vector<Instruction *>toRemove;
+    		for (Function::iterator FI = F.end(), FE = F.begin(); FI != FE;) {
+					//decrements here as no reverse iterator is provided and can follow the end begin comparison
+					--FI;
+					BasicBlock* block = FI;
+					for (BasicBlock::reverse_iterator i = block->rbegin(), e = block->rend(); i!=e; ++i) {
+						//Each instruction is a value
+						Instruction *I = &(*i);
+						if(isa<TerminatorInst>(I) || isa<DbgInfoIntrinsic>(I)||
+								isa<LandingPadInst>(I) || I−>mayHaveSideEffects()){
+							continue;	
+						}
+						if(I->getNumUses()==0){
+							toRemove.push_back(I);
+						}
+					}
+				}
+				if(toRemove.size()>0){
+				changed=true;
+				curChanged=true;
+					for(Instruction *I : toRemove){
+						outs() << "removed instruction " << *I << "\n";
+						I->eraseFromParent();
+					}
+				}
+    	}
+    	return changed;
+    }
+  };
+}
+
+// LLVM uses the address of this static member to identify the pass, so the
+// initialization value is unimportant.
+char DeadCodeElimination::ID = 0;
+static RegisterPass<DeadCodeElimination> X("dead-code-elimination", "15745: Dead Code Elimination", false, false);
