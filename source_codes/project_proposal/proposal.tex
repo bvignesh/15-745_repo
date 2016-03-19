@@ -34,7 +34,7 @@
 % not capitalized unless they are the first or last word of the title.
 % Linebreaks \\ can be used within to get better formatting as desired.
 % Do not put math or special symbols in the title.
-\title{Compiler Support for Approximate Computing}
+\title{Compiler Support for Restricting Data Movement}
 
 
 % author names and affiliations
@@ -81,58 +81,57 @@ Email: vigneshb@andrew.cmu.edu}}
 One of the major challenges in Approximate Computing is 
 to target approximations which lie on the pareto-optimal
 boundary of performance and program quality. Compilers prove
-to be useful tools in finding \emph{good} approximation 
+to be useful tools for finding \emph{good} approximation 
 targets that maximize performance while bounding the
 quality degradation of the program. In this project, we aim
 to develop a compiler analysis pass that finds approximation
-opportunities while providing some form of a guarantee on the
+opportunities while simultaneously providing some form of a guarantee on the
 error introduced into the program.
 
 Research in the field of parallel computing has 
 identified data movement as one of the major impediments
-to continued scaling of performance as the core count
-increases. Data movement is necessary for a
+to continued performance scaling  with increasing core counts. Data movement is necessary for a
 program to execute \emph{correctly}. However, a growing class
 of applications, like image processing, data mining and machine learning,
-are displaying a tolerance to errors in the 
-program values. For these applications, we could limit the 
-amount of data sharing to improve performance at the cost of 
-small errors in the overall output of the program.
+are displaying a tolerance to errors in  
+program values. For these applications, it is a good idea to limit the 
+amount of data sharing in order to improve performance at the cost of 
+small errors in the overall output of programs.
 
 \section{Idea}
 
 Most modern multi-core processors implement data movement among cores
 using cache coherence. In this project, we wish to explore the impact 
-of reducing 
+of cutting
 coherence operations on the performance of applications and the 
 resulting quality degradation. 
 
 Our mechanism of cutting cache coherence is to partition the
-existing L1 cache in different cores into coherent and 
-incoherent parts. The incoherent part of the cache will not
+existing L1 cache, private to each core, into coherent and 
+incoherent parts. The incoherent cache will not
 enforce any form of coherence among multiple cores and, thus,
-houses data that is private to a core. The benefit of having private
+houses data that is strictly private to a core. The benefit of having private
 data is reduced communication among cores, which is essentially a 
 serializing operation in a parallel execution. 
 
-While eliminating inter-core communication via data privitization
-is bound to improve the performance of parallel programs, we must
-be strategic about our decision as to when to privatize data since this 
-decision controls the quality of the program. This is where we plan to 
+While eliminating inter-core communication via data privatization
+will surelyo improve the performance of parallel programs, we must at the same time
+be strategic about our decision as to when to privatize data. This 
+decision controls the quality of a program. This is where we plan to 
 utilize a compiler to identify approximation opportunities that will 
-yeild performance improvement at the cost of insignificant error in the
+yield performance improvement at the cost of insignificant error in the
 program output.
 
 In order to estimate the potential damage due to approximation, we aim
 to develop a compiler pass that will analyse the impact of different 
-variables used in a program. We will then mark data as approximable based 
-on the frequency of the data reuse in the program. This pass will be 
+variables used in a program on program quality. We will then mark data as approximable based 
+on the frequency of data reuse in the program. This pass will be 
 described in greater detail in the next section.
 
 \section{Mechanism}
 
 As mentioned before, we need to strategically place data
-in the incoherent cache in order to bound the error in the 
+in the incoherent cache in order to contain the error in the 
 program output to tolerable values. Our compiler analysis will search
 for shared data in programs whose correctness is not critical to 
 program quality. In order to do this, we first need to identify 
@@ -145,11 +144,11 @@ can be an effective way to explore the performance-correctness
 tradeoff. We extend this concept by stating that if a
 synchronization operation is deemed unnecessary then 
 providing coherence for the data value being guarded is also 
-not important. In this manner, our compiler pass builds a 
+not essential. In this manner, our compiler pass builds a 
 set of candidates that can be approximated. 
 
-The next task is to select the data values from the 
-above list of possible candidates that will not cause 
+The next task is to select the data values, from the 
+above list of possible candidates, that will not cause 
 significant quality degradation. In order to find such
 variables, we perform a liveness analysis of the candidates 
 and determine the program lifetime of each variable. We use
@@ -158,31 +157,31 @@ quality. Variables with shorter lifetimes might not effect program
 quality much and vice versa. We aim to explore other dataflow 
 analyses and metrics to find relative importance in subsequent
 versions of our pass. We are also considering passing a 
-\emph{quality threshold} to our pass which can then vary the
+\emph{quality threshold} as an argument to our pass which can then statically vary the
 amount of variables being approximated. 
 
 Since our proposal relies on hardware not found in existing 
-architectures, we introduce ISA extensions that will place data in 
+architectures, we introduce ISA extensions that will place data into 
 the incoherent cache. Our compiler pass will annotate the binary
 with these special instructions to convey to the hardware (simulated) 
 that the data value must be placed in an incoherent cache. Subsequent
 accesses to the data value by a core will modify the data stored in its
 incoherent, private cache. 
 
-While the previous paragraph moving data from the coherent cache to 
+While the previous paragraph discussed moving data from the coherent cache to 
 the incoherent cache, we might also have to do the opposite at times. 
-This could be a way to limit the accumulation of error value in the program. 
+This could be a way to limit the accumulation of error value in a program. 
 In order to get a coherent copy from at incoherent copy we
 apply an approximation based on the computation being performed
-in the original shared data. For example, if operation being 
+on the original shared data. For example, if the operation being 
 performed on the original shared data was addition then we 
-apply the updates of the addition to the local value of the core. 
+apply the updates of the addition to the local value in each core. 
 When it is time to convert the local value to a global value, 
 we randomly select the value from the incoherent cache of one
 of the cores and assume that the other cores also computed 
-the same value. After performing this \emph{approximate merge}
+the same value and update the local copy with a multiple of the total number of threads. After performing this \emph{approximate merge}
 we place the data in the coherent cache and from this 
-point on all the cores see the data value.
+point on all, the cores see a coherent data value.
 
 In the initial version of our compiler pass, we will 
 support only limited computations on shared data and their
@@ -215,7 +214,7 @@ special functions/ISA extensions), we can randomly select one
 of the thread private data, apply the approximate merge and convert
 back to shared data. While we are actually duplicating data in 
 the program, the logical view of the duplication is basically
-storing the data in an incoherent cache. The duplication of data
+storing the shared data in an incoherent cache. The duplication of data
 allows us to run the effect of no coherence on a native machine
 that has coherence.
 
@@ -237,7 +236,7 @@ for the data values that should be approximated. Also, convert the shared data
 into thread local data.
 \item Identify the programmer routine that indicates the application of 
 approximate merge and add the code to perform the merge into the program's binary
-\item Run a generated binary on the simulator and native machine to get 
+\item Run the generated \emph{approximate} binary on the simulator and a native machine to get 
 an idea of the performance vs error tradeoff
 \item Add support for more complex dataflow analysis for detection 
 of approximation targets
@@ -259,8 +258,8 @@ We have set the following goals for ourselves:
 
 \item \textbf{75\% goal:} Complete code annotation so that if we have any other heurestic
  for approximation then atleast the  performance benefit of the approximation can be tested on the simulation infrastructure
-\item \textbf{100\% goal:} Implement a liveness analysis based pass that detects approximation opportunity for a set of computations on shared data
-\item \textbf{125\% goal:} Implement other dataflow analyses and test other quality metrics to detect approximation. Perform experiments to test the performance-accuracy tradeoff of different policies. Also, add support for more kinds of computations on shared data
+\item \textbf{100\% goal:} Implement a liveness analysis based pass that detects approximation opportunity for a set of computations on shared data. Explore the sensitivity of the quality threshold on the resultant performance and error values.
+\item \textbf{125\% goal:} Implement other dataflow analyses and test other quality metrics to detect approximationr. Perform experiments to test the performance-accuracy tradeoff of different detection policies. Also, add support for more kinds of computations on shared data
 
 \end{itemize}
 
@@ -365,22 +364,6 @@ We have set the following goals for ourselves:
 
 
 
-\section{Conclusion}
-The conclusion goes here.
-
-
-
-
-% conference papers do not normally have an appendix
-
-
-% use section* for acknowledgment
-\section*{Acknowledgment}
-
-
-The authors would like to thank...
-
-
 
 
 
@@ -408,10 +391,8 @@ The authors would like to thank...
 % (used to reserve space for the reference number labels box)
 \begin{thebibliography}{1}
 
-\bibitem{IEEEhowto:kopka}
-H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus
-  0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.
-
+\bibitem{paraprox}
+Mehrzad Samadi, Davoud Anoushe Jamshidi, Janghaeng Lee, and Scott Mahlke. 2014. Paraprox: pattern-based approximation for data parallel applications. In Proceedings of the 19th international conference on Architectural support for programming languages and operating systems (ASPLOS '14). ACM, New York, NY, USA, 35-50. DOI=http://dx.doi.org/10.1145/2541940.2541948 
 \end{thebibliography}
 
 

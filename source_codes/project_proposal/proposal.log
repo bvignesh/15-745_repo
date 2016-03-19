@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Arch Linux) (preloaded format=pdflatex 2016.2.14)  18 MAR 2016 21:03
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Arch Linux) (preloaded format=pdflatex 2016.2.14)  18 MAR 2016 21:31
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -129,20 +129,29 @@ LaTeX Font Info:    ... okay on input line 29.
 
 
 ]
+Underfull \vbox (badness 7925) has occurred while \output is active []
 
-LaTeX Warning: Citation `paraprox' on page 2 undefined on input line 190.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <12> on input line 227.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <8> on input line 227.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <6> on input line 227.
+ [2]
+Underfull \hbox (badness 5802) in paragraph at lines 395--396
+[]\OT1/ptm/m/n/9 Mehrzad Samadi, Davoud Anoushe Jamshidi, Jang-haeng
+ []
 
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <12> on input line 228.
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <8> on input line 228.
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <6> on input line 228.
-[2]
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <9> on input line 412.
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <5> on input line 412.
+
+Underfull \hbox (badness 7981) in paragraph at lines 395--396
+\OT1/ptm/m/n/9 prox-i-ma-tion for data par-al-lel ap-pli-ca-tions. In Pro-ceed-
+
+ []
+
+
+Underfull \hbox (badness 5519) in paragraph at lines 395--396
+\OT1/ptm/m/n/9 ings of the 19th in-ter-na-tional con-fer-ence on Ar-chi-tec-
+ []
 
 
 ** Conference Paper **
@@ -157,24 +166,20 @@ Before submitting the final camera ready copy, remember to:
 
 [3
 
-] (./proposal.aux)
-
-LaTeX Warning: There were undefined references.
-
- ) 
+] (./proposal.aux) ) 
 Here is how much of TeX's memory you used:
- 1067 strings out of 493054
- 19284 string characters out of 6140586
- 78954 words of memory out of 5000000
- 4648 multiletter control sequences out of 15000+600000
- 36802 words of font info for 72 fonts, out of 8000000 for 9000
+ 1056 strings out of 493054
+ 19170 string characters out of 6140586
+ 79954 words of memory out of 5000000
+ 4642 multiletter control sequences out of 15000+600000
+ 33618 words of font info for 67 fonts, out of 8000000 for 9000
  1144 hyphenation exceptions out of 8191
- 26i,7n,19p,296b,236s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/share/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/share/texmf-dist/fon
-ts/type1/public/amsfonts/cm/cmsy8.pfb></usr/share/texmf-dist/fonts/type1/urw/ti
-mes/utmb8a.pfb></usr/share/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/sh
-are/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on proposal.pdf (3 pages, 53819 bytes).
+ 26i,7n,19p,381b,236s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/usr/share/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/sh
+are/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/share/texmf-dist/
+fonts/type1/urw/times/utmb8a.pfb></usr/share/texmf-dist/fonts/type1/urw/times/u
+tmr8a.pfb></usr/share/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on proposal.pdf (3 pages, 53851 bytes).
 PDF statistics:
  31 PDF objects out of 1000 (max. 8388607)
  21 compressed objects within 1 object stream
