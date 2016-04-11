@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Arch Linux) (preloaded format=pdflatex 2016.2.14)  10 APR 2016 02:50
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Arch Linux) (preloaded format=pdflatex 2016.2.14)  11 APR 2016 03:10
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -134,19 +134,24 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 [1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}
 
 
-] [2]
-Underfull \hbox (badness 5802) in paragraph at lines 444--445
+]
+Underfull \hbox (badness 1789) in paragraph at lines 234--235
+[]\OT1/ptm/m/n/12 Identification of the ini-tial-iza-tion point of
+ []
+
+
+Underfull \hbox (badness 5802) in paragraph at lines 517--518
 []\OT1/ptm/m/n/9 Mehrzad Samadi, Davoud Anoushe Jamshidi, Jang-haeng
  []
 
 
-Underfull \hbox (badness 7981) in paragraph at lines 444--445
+Underfull \hbox (badness 7981) in paragraph at lines 517--518
 \OT1/ptm/m/n/9 prox-i-ma-tion for data par-al-lel ap-pli-ca-tions. In Pro-ceed-
 
  []
 
 
-Underfull \hbox (badness 5519) in paragraph at lines 444--445
+Underfull \hbox (badness 5519) in paragraph at lines 517--518
 \OT1/ptm/m/n/9 ings of the 19th in-ter-na-tional con-fer-ence on Ar-chi-tec-
  []
 
@@ -161,11 +166,11 @@ Before submitting the final camera ready copy, remember to:
  uses only Type 1 fonts and that every step in the generation
  process uses the appropriate paper size.
 
-[3] (./proposal.aux) ) 
+[2] (./proposal.aux) ) 
 Here is how much of TeX's memory you used:
  1056 strings out of 493054
  19170 string characters out of 6140586
- 79954 words of memory out of 5000000
+ 78954 words of memory out of 5000000
  4642 multiletter control sequences out of 15000+600000
  33618 words of font info for 67 fonts, out of 8000000 for 9000
  1144 hyphenation exceptions out of 8191
@@ -174,10 +179,10 @@ Here is how much of TeX's memory you used:
 share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/share/texmf-dis
 t/fonts/type1/urw/times/utmb8a.pfb></usr/share/texmf-dist/fonts/type1/urw/times
 /utmr8a.pfb></usr/share/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on proposal.pdf (3 pages, 54876 bytes).
+Output written on proposal.pdf (2 pages, 50008 bytes).
 PDF statistics:
- 31 PDF objects out of 1000 (max. 8388607)
- 21 compressed objects within 1 object stream
+ 28 PDF objects out of 1000 (max. 8388607)
+ 19 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
