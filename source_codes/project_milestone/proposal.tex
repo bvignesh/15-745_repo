@@ -78,11 +78,11 @@ Email: vigneshb@andrew.cmu.edu}}
 
 \section{Project Motivation}
 
-The aim of this project is to improve the performance of parallel 
-applications by trading off precision of the computations. 
+In this project we aim to improve the performance of parallel 
+applications by trading off precision of computations. 
 
 The scaling of parallel programs with increasing number of cores
-is limited by data movement within cores. However, this data 
+is limited by data movement between cores. However, this data 
 movement - in the form of synchronization and cache coherence - 
 is essential for consistent manipulation of shared program values.
 In this problem setting, approximate computing can help speedup the 
@@ -258,7 +258,7 @@ our optimization pass by the final report:
 \begin{itemize}
 \item Incorporate support for identifying more synchronization primitives
 which, consequently, will allow identification of more approximation targets
-\item Apply a set of data flow analyses (primaritly liveness analysis and 
+\item Apply a set of data flow analyses (primarily liveness analysis and 
 reaching definitions) to prune the set of approximation in order to control
 accuracy loss
 \item Collect results for a range of application with different amounts of 
