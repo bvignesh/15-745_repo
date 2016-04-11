@@ -224,6 +224,10 @@ optimization pass
 
 This pass first identified the body of parallel loops and then did a pattern matching for variables in the loop body with the load-modify-store pattern.
 
+Identifying the parallel loop is not as simple as using LLVM's loop analysis pass, as not all loops are parallel loops such as initialization loops, what we did instead is used special indicators in the program to mark it as a parallel loop and when doing the pass to recognize it and then marking all the basic blocks in the parallel loop body. 
+
+As for the pattern matching, for each variable starting with a load we added it to the suspect list, and followed along the basic block, if later it inevitability and just have the modify and store operations without reaching any basic blocks not marked, then we added it to the recognized variables list.
+
 \subsection{Pass 2}
 
 This pass required using the shared variables' information from the previous pass 
@@ -244,6 +248,8 @@ incoherent copy to form a single value.
 \subsection{Pass 3}
 
 This pass takes the information of the previous pass indicating where it have changed and inserted blank function calls right before the modified code.
+
+To make the compiler to not just optimize the function away, we did put irrelevant code in the function which access global data so that the optimizer won't optimize it away, but as this is irrelevant code in the simulator we can just configure it to ignore the function body when it encounters the function to not introduce another point of uncertainty.
 
 \section{Execution Plan}
 
