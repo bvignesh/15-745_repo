@@ -247,7 +247,23 @@ incoherent copy to form a single value.
 
 \section{Execution Plan}
 
-%add text here
+We have set up most of the initial infrastructure to test the performance and 
+accuracy implications of providing coherence sporadically. The major roadblock
+for us till now has been to insert arbitrary function calls into the bytecode.
+We expect to resolve this issue soon and move on to implementing more 
+functionalities to our optimization pass as mentioned in the proposal.
+
+To reiterate our goals, we wish to have the following functionalities in
+our optimization pass by the final report:
+\begin{itemize}
+\item Incorporate support for identifying more synchronization primitives
+which, consequently, will allow identification of more approximation targets
+\item Apply a set of data flow analyses (primaritly liveness analysis and 
+reaching definitions) to prune the set of approximation in order to control
+accuracy loss
+\item Collect results for a range of application with different amounts of 
+opportunities to apply approximations
+\end{itemize}
 
 
 %\section{<echanism}
