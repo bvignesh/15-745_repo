@@ -190,7 +190,7 @@ We shall now explain each pass in greater detail in the following subsections
 The aim of this pass is to identify safe-to-approximate shared variables
 that are guaranteed to not cause a program crash.
 
-%Add text here
+As we are trying to find shared variables in parallel loops, the most straightforward approach is to find load-modify-store patterns in a loop, so we first located the place where there is a parallel loop, and within execution order find variables which have the load-modify-store pattern in the body of the parallel loop. As these variables are only used this way, they are some kind of accumulative variable which is related to the computation of the program rather then the control flow of the program and thus are generally safe-to-approximate variables. Later tests on these variables can be made to ensure that these are safe-to-approximate shared variables.
 
 \subsection{Pass 2}
 
@@ -213,7 +213,7 @@ from multiple incoherent values.
 The aim of this pass is to get an estimate of the performance
 benefit of not providing cache coherence at all times
 
-%Add text here
+Our simulator can be configured to identify certain function calls and acts accordingly. In this case at the place where we modified the code to not provide coherence, we added certain blank function calls that are useless to the program but helps the simulator indicate the part that we want to run without coherency.
 
 \section{Progress}
 
@@ -222,7 +222,7 @@ optimization pass
 
 \subsection{Pass 1}
 
-%add text here
+This pass first identified the body of parallel loops and then did a pattern matching for variables in the loop body with the load-modify-store pattern.
 
 \subsection{Pass 2}
 
@@ -243,7 +243,7 @@ incoherent copy to form a single value.
 
 \subsection{Pass 3}
 
-%add text here
+This pass takes the information of the previous pass indicating where it have changed and inserted blank function calls right before the modified code.
 
 \section{Execution Plan}
 
