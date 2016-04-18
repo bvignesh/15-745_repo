@@ -1,0 +1,188 @@
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Arch Linux) (preloaded format=pdflatex 2016.2.14)  11 APR 2016 03:10
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**proposal.tex
+(./proposal.tex
+LaTeX2e <2015/10/01> patch level 2
+Babel <3.9m> and hyphenation patterns for 79 languages loaded.
+(./IEEEtran.cls
+Document Class: IEEEtran 2015/08/26 V1.8b by Michael Shell
+-- See the "IEEEtran_HOWTO" manual for usage information.
+-- http://www.michaelshell.org/tex/ieeetran/
+\@IEEEtrantmpdimenA=\dimen102
+\@IEEEtrantmpdimenB=\dimen103
+\@IEEEtrantmpdimenC=\dimen104
+\@IEEEtrantmpcountA=\count79
+\@IEEEtrantmpcountB=\count80
+\@IEEEtrantmpcountC=\count81
+\@IEEEtrantmptoksA=\toks14
+LaTeX Font Info:    Try loading font information for OT1+ptm on input line 503.
+
+(/usr/share/texmf-dist/tex/latex/psnfss/ot1ptm.fd
+File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
+)
+-- Using 8.5in x 11in (letter) paper.
+-- Using PDF output.
+\@IEEEnormalsizeunitybaselineskip=\dimen105
+-- This is a 12 point document.
+\CLASSINFOnormalsizebaselineskip=\dimen106
+\CLASSINFOnormalsizeunitybaselineskip=\dimen107
+\IEEEnormaljot=\dimen108
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <6> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1090.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <6> not available
+(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 1090.
+
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <8> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1090.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <8> not available
+(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 1090.
+
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <9> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1090.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <9> not available
+(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 1090.
+
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1090.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <10> not available
+(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 1090.
+
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1090.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <12> not available
+(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 1090.
+
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <14> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1090.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <14> not available
+(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 1090.
+
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <20> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1090.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <20> not available
+(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 1090.
+
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <22> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1090.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <22> not available
+(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 1090.
+
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <24> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1090.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <24> not available
+(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 1090.
+
+\IEEEquantizedlength=\dimen109
+\IEEEquantizedlengthdiff=\dimen110
+\IEEEquantizedtextheightdiff=\dimen111
+\IEEEilabelindentA=\dimen112
+\IEEEilabelindentB=\dimen113
+\IEEEilabelindent=\dimen114
+\IEEEelabelindent=\dimen115
+\IEEEdlabelindent=\dimen116
+\IEEElabelindent=\dimen117
+\IEEEiednormlabelsep=\dimen118
+\IEEEiedmathlabelsep=\dimen119
+\IEEEiedtopsep=\skip41
+\c@section=\count82
+\c@subsection=\count83
+\c@subsubsection=\count84
+\c@paragraph=\count85
+\c@IEEEsubequation=\count86
+\abovecaptionskip=\skip42
+\belowcaptionskip=\skip43
+\c@figure=\count87
+\c@table=\count88
+\@IEEEeqnnumcols=\count89
+\@IEEEeqncolcnt=\count90
+\@IEEEsubeqnnumrollback=\count91
+\@IEEEquantizeheightA=\dimen120
+\@IEEEquantizeheightB=\dimen121
+\@IEEEquantizeheightC=\dimen122
+\@IEEEquantizeprevdepth=\dimen123
+\@IEEEquantizemultiple=\count92
+\@IEEEquantizeboxA=\box26
+\@IEEEtmpitemindent=\dimen124
+\IEEEPARstartletwidth=\dimen125
+\c@IEEEbiography=\count93
+\@IEEEtranrubishbin=\box27
+) (./proposal.aux)
+\openout1 = `proposal.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 29.
+LaTeX Font Info:    ... okay on input line 29.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 29.
+LaTeX Font Info:    ... okay on input line 29.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 29.
+LaTeX Font Info:    ... okay on input line 29.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 29.
+LaTeX Font Info:    ... okay on input line 29.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 29.
+LaTeX Font Info:    ... okay on input line 29.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 29.
+LaTeX Font Info:    ... okay on input line 29.
+
+-- Lines per column: 48 (exact).
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <12> on input line 160.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <8> on input line 160.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <6> on input line 160.
+[1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}
+
+
+]
+Underfull \hbox (badness 1789) in paragraph at lines 234--235
+[]\OT1/ptm/m/n/12 Identification of the ini-tial-iza-tion point of
+ []
+
+
+Underfull \hbox (badness 5802) in paragraph at lines 517--518
+[]\OT1/ptm/m/n/9 Mehrzad Samadi, Davoud Anoushe Jamshidi, Jang-haeng
+ []
+
+
+Underfull \hbox (badness 7981) in paragraph at lines 517--518
+\OT1/ptm/m/n/9 prox-i-ma-tion for data par-al-lel ap-pli-ca-tions. In Pro-ceed-
+
+ []
+
+
+Underfull \hbox (badness 5519) in paragraph at lines 517--518
+\OT1/ptm/m/n/9 ings of the 19th in-ter-na-tional con-fer-ence on Ar-chi-tec-
+ []
+
+
+** Conference Paper **
+Before submitting the final camera ready copy, remember to:
+
+ 1. Manually equalize the lengths of two columns on the last page
+ of your paper;
+
+ 2. Ensure that any PostScript and/or PDF output post-processing
+ uses only Type 1 fonts and that every step in the generation
+ process uses the appropriate paper size.
+
+[2] (./proposal.aux) ) 
+Here is how much of TeX's memory you used:
+ 1056 strings out of 493054
+ 19170 string characters out of 6140586
+ 78954 words of memory out of 5000000
+ 4642 multiletter control sequences out of 15000+600000
+ 33618 words of font info for 67 fonts, out of 8000000 for 9000
+ 1144 hyphenation exceptions out of 8191
+ 26i,7n,19p,381b,236s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/usr/share/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/
+share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/share/texmf-dis
+t/fonts/type1/urw/times/utmb8a.pfb></usr/share/texmf-dist/fonts/type1/urw/times
+/utmr8a.pfb></usr/share/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on proposal.pdf (2 pages, 50008 bytes).
+PDF statistics:
+ 28 PDF objects out of 1000 (max. 8388607)
+ 19 compressed objects within 1 object stream
+ 0 named destinations out of 1000 (max. 500000)
+ 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+

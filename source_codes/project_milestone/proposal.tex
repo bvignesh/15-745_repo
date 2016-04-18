@@ -1,0 +1,548 @@
+\documentclass[12pt,conference]{IEEEtran}
+
+
+
+
+% *** GRAPHICS RELATED PACKAGES ***
+%
+\ifCLASSINFOpdf
+  % \usepackage[pdftex]{graphicx}
+  % declare the path(s) where your graphic files are
+  % \graphicspath{{../pdf/}{../jpeg/}}
+  % and their extensions so you won't have to specify these with
+  % every instance of \includegraphics
+  % \DeclareGraphicsExtensions{.pdf,.jpeg,.png}
+\else
+  % or other class option (dvipsone, dvipdf, if not using dvips). graphicx
+  % will default to the driver specified in the system graphics.cfg if no
+  % driver is specified.
+  % \usepackage[dvips]{graphicx}
+  % declare the path(s) where your graphic files are
+  % \graphicspath{{../eps/}}
+  % and their extensions so you won't have to specify these with
+  % every instance of \includegraphics
+  % \DeclareGraphicsExtensions{.eps}
+\fi
+\hyphenation{op-tical net-works semi-conduc-tor}
+
+
+\begin{document}
+%
+% paper title
+% Titles are generally capitalized except for words such as a, an, and, as,
+% at, but, by, for, in, nor, of, on, or, the, to and up, which are usually
+% not capitalized unless they are the first or last word of the title.
+% Linebreaks \\ can be used within to get better formatting as desired.
+% Do not put math or special symbols in the title.
+\title{Compiler Support for Restricting Data Movement}
+
+
+% author names and affiliations
+% use a multiple column layout for up to three different
+% affiliations
+\author{\IEEEauthorblockN{Junhan Zhuo}
+\IEEEauthorblockA{Carnegie Mellon University\\
+Email: junhanz@andrew.cmu.edu}
+\and
+\IEEEauthorblockN{Vignesh Balaji}
+\IEEEauthorblockA{Carnegie Mellon University\\
+Email: vigneshb@andrew.cmu.edu}}
+
+
+
+% make the title area
+\maketitle
+
+% As a general rule, do not put math, special symbols or citations
+% in the abstract
+%\begin{abstract}
+%The abstract goes here.
+%\end{abstract}
+
+% no keywords
+
+
+
+
+% For peer review papers, you can put extra information on the cover
+% page as needed:
+% \ifCLASSOPTIONpeerreview
+% \begin{center} \bfseries EDICS Category: 3-BBND \end{center}
+% \fi
+%
+% For peerreview papers, this IEEEtran command inserts a page break and
+% creates the second title. It will be ignored for other modes.
+\IEEEpeerreviewmaketitle
+
+
+
+\section{Project Motivation}
+
+In this project we aim to improve the performance of parallel 
+applications by trading off precision of computations. 
+
+The scaling of parallel programs with increasing number of cores
+is limited by data movement between cores. However, this data 
+movement - in the form of synchronization and cache coherence - 
+is essential for consistent manipulation of shared program values.
+In this problem setting, approximate computing can help speedup the 
+execution of parallel programs by reducing inter-core communication
+
+Research in approximate computing is based on the observation that
+a growing class of important applications can tolerate imprecision in 
+program values. The hypothesis here is that not all program values
+are equally important for a \emph{good} program output quality. Using
+this hypothesis, we can reduce communication for unimportant values in 
+parallel programs to speedup execution at the cost of negligible output
+quality degradation.
+
+The task of finding the above mentioned \emph{unimportant} values can be performed
+by a compiler. With the help of different data flow analysis, we can 
+find locate the shared data of a program whose imprecision does not
+affect the program quality by much. In this project, we will be focusing 
+our attention on reducing one aspect of inter-core communication - cache
+coherence - to improve performance of parallel programs while containing 
+the output degradation of an application to a user specified threshold.
+
+%One of the major challenges in Approximate Computing is 
+%to target approximations which lie on the pareto-optimal
+%boundary of performance and program quality. Compilers prove
+%to be useful tools for finding \emph{good} approximation 
+%targets that maximize performance while bounding the
+%quality degradation of the program. In this project, we aim
+%to develop a compiler analysis pass that finds approximation
+%opportunities while simultaneously providing some form of a guarantee on the
+%error introduced into the program.
+%
+%Research in the field of parallel computing has 
+%identified data movement as one of the major impediments
+%to continued performance scaling  with increasing core counts. Data movement is necessary for a
+%program to execute \emph{correctly}. However, a growing class
+%of applications, like image processing, data mining and machine learning,
+%are displaying a tolerance to errors in  
+%program values. For these applications, it is a good idea to limit the 
+%amount of data sharing in order to improve performance at the cost of 
+%small errors in the overall output of programs.
+
+\section{High level System Description}
+
+Most modern multi-core processors implement data movement among cores
+using cache coherence. In this project, we wish to explore the impact 
+of cutting
+coherence operations on the performance of applications and the 
+resulting quality degradation. 
+
+Our mechanism of cutting cache coherence is to partition the
+existing L1 cache, private to each core, into coherent and 
+incoherent parts. The incoherent cache will not
+enforce any form of coherence among multiple cores and, thus,
+houses data that is strictly private to a core. The benefit of having private
+data is reduced communication among cores, which is essentially a 
+serializing operation in a parallel execution. 
+
+While eliminating inter-core communication via data privatization
+will surely improve the performance of parallel programs, we must at the same time
+be strategic about our decision as to when to privatize data and when to merge private copies
+back. This 
+decision controls the quality of a program. This is where we plan to 
+utilize a compiler to identify approximation opportunities that will 
+yield performance improvement at the cost of insignificant error in the
+program output.
+
+%In order to estimate the potential damage due to approximation, we aim
+%to develop a compiler pass that will analyse the impact of different 
+%variables used in a program on program quality. We will then mark data as approximable based 
+%on the frequency of data reuse in the program. This pass will be 
+%described in greater detail in the next section.
+
+At a high level, our optimization pass needs to do the following things:
+\begin{itemize}
+\item Identify a list of shared variables which, on approximation, will not
+cause the application to crash
+\item Prune the above list of candidates on the basis of dataflow analyses to 
+meet user specified quality constraints
+\item Modify the application code to place data in an incoherent cache (In our case
+add special functions that will be understood by our custom PIN based simulator)
+\end{itemize}
+
+\section{Structure of the Optimization pass}
+
+In this section we present our plan for implementing the above goals and
+the progress we have made to that end.
+
+We decided to break our optimization pass into three individual pass each handling
+a part of the above high level goals. The objectives of the three passes are listed 
+below:
+\begin{itemize}
+\item \textbf{Pass 1}: In this pass we identify shared data that can be
+approximated without causing program crashes
+\item \textbf{Pass 2}: For the variables identified in the previous pass,
+duplicate the shared data among different threads and change references to the
+shared variable by the thread private duplicate
+\item \textbf{Pass 3}: Modify the source code to indicate information that
+can be identified by the performance simulator
+\end{itemize}
+
+We shall now explain each pass in greater detail in the following subsections
+
+\subsection{Pass 1}
+
+The aim of this pass is to identify safe-to-approximate shared variables
+that are guaranteed to not cause a program crash.
+
+As we are trying to find shared variables in parallel loops, the most straightforward approach is to find load-modify-store patterns in a loop, so we first located the place where there is a parallel loop, and within execution order find variables which have the load-modify-store pattern in the body of the parallel loop. As these variables are only used this way, they are some kind of accumulative variable which is related to the computation of the program rather then the control flow of the program and thus are generally safe-to-approximate variables. Later tests on these variables can be made to ensure that these are safe-to-approximate shared variables.
+
+\subsection{Pass 2}
+
+The aim of this pass is to model the error caused in the program output
+due to not providing cache coherence all the time.
+
+We use the information of safe-to-approximate shared variables 
+from the previous pass to 
+duplicate the shared variables across different threads. The
+duplication of data allows us to understand the effect of not having 
+cache coherence on a system that provides coherence at all times. In an 
+original system, we would have had to perform a \emph{merge} of the 
+incoherent values to produce a single, globally visible value. We 
+intend to perform a similar merge by making the pass place a merge 
+function that applies a specific logic to produce a single value
+from multiple incoherent values.
+
+\subsection{Pass 3}
+
+The aim of this pass is to get an estimate of the performance
+benefit of not providing cache coherence at all times
+
+Our simulator can be configured to identify certain function calls and acts accordingly. In this case at the place where we modified the code to not provide coherence, we added certain blank function calls that are useless to the program but helps the simulator indicate the part that we want to run without coherency.
+
+\section{Progress}
+
+In this section, we present the progress we have made on our 
+optimization pass
+
+\subsection{Pass 1}
+
+This pass first identified the body of parallel loops and then did a pattern matching for variables in the loop body with the load-modify-store pattern.
+
+Identifying the parallel loop is not as simple as using LLVM's loop analysis pass, as not all loops are parallel loops such as initialization loops, what we did instead is used special indicators in the program to mark it as a parallel loop and when doing the pass to recognize it and then marking all the basic blocks in the parallel loop body. 
+
+As for the pattern matching, for each variable starting with a load we added it to the suspect list, and followed along the basic block, if later it inevitability and just have the modify and store operations without reaching any basic blocks not marked, then we added it to the recognized variables list.
+
+\subsection{Pass 2}
+
+This pass required using the shared variables' information from the previous pass 
+to create thread private copies of the variables.
+
+Functionalities implemented:
+\begin{itemize}
+\item Identification of the initialization point of shared variables in program bytecode
+\item Creation of duplicate copies for each shared variable
+\end{itemize}
+
+Functionalities to be implemented:
+\begin{itemize}
+\item Insert arbitrary merge function in the byte code that consolidates the 
+incoherent copy to form a single value.
+\end{itemize}
+
+\subsection{Pass 3}
+
+This pass takes the information of the previous pass indicating where it have changed and inserted blank function calls right before the modified code.
+
+To make the compiler to not just optimize the function away, we did put irrelevant code in the function which access global data so that the optimizer won't optimize it away, but as this is irrelevant code in the simulator we can just configure it to ignore the function body when it encounters the function to not introduce another point of uncertainty.
+
+\section{Execution Plan}
+
+We have set up most of the initial infrastructure to test the performance and 
+accuracy implications of providing coherence sporadically. The major roadblock
+for us till now has been to insert arbitrary function calls into the bytecode.
+We expect to resolve this issue soon and move on to implementing more 
+functionalities to our optimization pass as mentioned in the proposal.
+
+To reiterate our goals, we wish to have the following functionalities in
+our optimization pass by the final report:
+\begin{itemize}
+\item Incorporate support for identifying more synchronization primitives
+which, consequently, will allow identification of more approximation targets
+\item Apply a set of data flow analyses (primarily liveness analysis and 
+reaching definitions) to prune the set of approximation in order to control
+accuracy loss
+\item Collect results for a range of application with different amounts of 
+opportunities to apply approximations
+\end{itemize}
+
+
+%\section{<echanism}
+%
+%As mentioned before, we need to strategically place data
+%in the incoherent cache in order to contain the error in the 
+%program output to tolerable values. Our compiler analysis will search
+%for shared data in programs whose correctness is not critical to 
+%program quality. In order to do this, we first need to identify 
+%shared data that can be approximated. 
+%
+%As an initial version of the project, we consider data 
+%that is guarded by synchronization operations. Prior research 
+%in approximate computing has shown that removing synchronization 
+%can be an effective way to explore the performance-correctness 
+%tradeoff. We extend this concept by stating that if a
+%synchronization operation is deemed unnecessary then 
+%providing coherence for the data value being guarded is also 
+%not essential. In this manner, our compiler pass builds a 
+%set of candidates that can be approximated. 
+%
+%The next task is to select the data values, from the 
+%above list of possible candidates, that will not cause 
+%significant quality degradation. In order to find such
+%variables, we perform a liveness analysis of the candidates 
+%and determine the program lifetime of each variable. We use
+%lifetime as a proxy for the importance of a variable on program
+%quality. Variables with shorter lifetimes might not effect program 
+%quality much and vice versa. We aim to explore other dataflow 
+%analyses and metrics to find relative importance in subsequent
+%versions of our pass. We are also considering passing a 
+%\emph{quality threshold} as an argument to our pass which can then statically vary the
+%amount of variables being approximated. 
+%
+%Since our proposal relies on hardware not found in existing 
+%architectures, we introduce ISA extensions that will place data into 
+%the incoherent cache. Our compiler pass will annotate the binary
+%with these special instructions to convey to the hardware (simulated) 
+%that the data value must be placed in an incoherent cache. Subsequent
+%accesses to the data value by a core will modify the data stored in its
+%incoherent, private cache. 
+%
+%While the previous paragraph discussed moving data from the coherent cache to 
+%the incoherent cache, we might also have to do the opposite at times. 
+%This could be a way to limit the accumulation of error value in a program. 
+%In order to get a coherent copy from at incoherent copy we
+%apply an approximation based on the computation being performed
+%on the original shared data. For example, if the operation being 
+%performed on the original shared data was addition then we 
+%apply the updates of the addition to the local value in each core. 
+%When it is time to convert the local value to a global value, 
+%we randomly select the value from the incoherent cache of one
+%of the cores and assume that the other cores also computed 
+%the same value and update the local copy with a multiple of the total number of threads. After performing this \emph{approximate merge}
+%we place the data in the coherent cache and from this 
+%point on all, the cores see a coherent data value.
+%
+%In the initial version of our compiler pass, we will 
+%support only limited computations on shared data and their
+%corresponding approximations (which will be similar in the 
+%spirit of \cite{paraprox}). We aim to implement more
+%general operations in subsequent versions.
+%
+%\section{Infrastructure}
+%
+%In order to compute the performance benefit of our approximation
+%we will be using a PIN based cache simulator. The simulator adds 
+%fixed cycle costs based on the level of cache from which the
+%data is accessed (three level cache modeled) and the coherence
+%state of the cacheline (MESI protocol modeled). The simulation
+%infrastructure is ready and has been in use for other research
+%for quite some time.
+%
+%As part of this project, we will model a part of each cores
+%L1 cache as incoherent. Using PIN's routine instrumentation,
+%we can identify the data that needs to be stored in the incoherent
+%cache (stores only tag values). This way we can compare the 
+%execution time of the approximate version against the precise
+%version to quantify the performance improvement.
+%
+%In order to evaluate the error in a program due to incoherent 
+%manipulation of data, we will make the compiler convert 
+%shared data into thread private data. Based on when the programmer
+%wishes to convert an incoherent data into a coherent data (through 
+%special functions/ISA extensions), we can randomly select one
+%of the thread private data, apply the approximate merge and convert
+%back to shared data. While we are actually duplicating data in 
+%the program, the logical view of the duplication is basically
+%storing the shared data in an incoherent cache. The duplication of data
+%allows us to run the effect of no coherence on a native machine
+%that has coherence.
+%
+%
+%\section{Project Plan}
+%
+%We have broken down the project plan into the following steps:
+%
+%\begin{itemize}
+%
+%\item Write a compiler pass to identify sychronization operations
+%\item Design logic to identify the shared data that is guarded inside
+%these synchronization operations and build a list of potential approximation
+%targets
+%\item Perform liveness analysis on these candidates and characterize 
+%variables on the basis of their lifetimes from the start of the approximation
+%\item Apply the proper annotations (special functions identified by the simulator)
+%for the data values that should be approximated. Also, convert the shared data
+%into thread local data.
+%\item Identify the programmer routine that indicates the application of 
+%approximate merge and add the code to perform the merge into the program's binary
+%\item Run the generated \emph{approximate} binary on the simulator and a native machine to get 
+%an idea of the performance vs error tradeoff
+%\item Add support for more complex dataflow analysis for detection 
+%of approximation targets
+%\item Add support for more computations that can be approximated
+%
+%\end{itemize}
+%
+%\section{Work Distribution}
+%
+%For the initial version of the compiler pass we will be working in tandem to 
+%set up the infrastructure. After the initial pass is complete, we will
+%concurrently try to add separate features to the compiler pass.
+%
+%\section{Project goals}
+%
+%We have set the following goals for ourselves:
+%
+%\begin{itemize}
+%
+%\item \textbf{75\% goal:} Complete code annotation so that if we have any other heurestic
+% for approximation then atleast the  performance benefit of the approximation can be tested on the simulation infrastructure
+%\item \textbf{100\% goal:} Implement a liveness analysis based pass that detects approximation opportunity for a set of computations on shared data. Explore the sensitivity of the quality threshold on the resultant performance and error values.
+%\item \textbf{125\% goal:} Implement other dataflow analyses and test other quality metrics to detect approximationr. Perform experiments to test the performance-accuracy tradeoff of different detection policies. Also, add support for more kinds of computations on shared data
+%
+%\end{itemize}
+%
+%
+
+
+
+% An example of a floating figure using the graphicx package.
+% Note that \label must occur AFTER (or within) \caption.
+% For figures, \caption should occur after the \includegraphics.
+% Note that IEEEtran v1.7 and later has special internal code that
+% is designed to preserve the operation of \label within \caption
+% even when the captionsoff option is in effect. However, because
+% of issues like this, it may be the safest practice to put all your
+% \label just after \caption rather than within \caption{}.
+%
+% Reminder: the "draftcls" or "draftclsnofoot", not "draft", class
+% option should be used if it is desired that the figures are to be
+% displayed while in draft mode.
+%
+%\begin{figure}[!t]
+%\centering
+%\includegraphics[width=2.5in]{myfigure}
+% where an .eps filename suffix will be assumed under latex, 
+% and a .pdf suffix will be assumed for pdflatex; or what has been declared
+% via \DeclareGraphicsExtensions.
+%\caption{Simulation results for the network.}
+%\label{fig_sim}
+%\end{figure}
+
+% Note that the IEEE typically puts floats only at the top, even when this
+% results in a large percentage of a column being occupied by floats.
+
+
+% An example of a double column floating figure using two subfigures.
+% (The subfig.sty package must be loaded for this to work.)
+% The subfigure \label commands are set within each subfloat command,
+% and the \label for the overall figure must come after \caption.
+% \hfil is used as a separator to get equal spacing.
+% Watch out that the combined width of all the subfigures on a 
+% line do not exceed the text width or a line break will occur.
+%
+%\begin{figure*}[!t]
+%\centering
+%\subfloat[Case I]{\includegraphics[width=2.5in]{box}%
+%\label{fig_first_case}}
+%\hfil
+%\subfloat[Case II]{\includegraphics[width=2.5in]{box}%
+%\label{fig_second_case}}
+%\caption{Simulation results for the network.}
+%\label{fig_sim}
+%\end{figure*}
+%
+% Note that often IEEE papers with subfigures do not employ subfigure
+% captions (using the optional argument to \subfloat[]), but instead will
+% reference/describe all of them (a), (b), etc., within the main caption.
+% Be aware that for subfig.sty to generate the (a), (b), etc., subfigure
+% labels, the optional argument to \subfloat must be present. If a
+% subcaption is not desired, just leave its contents blank,
+% e.g., \subfloat[].
+
+
+% An example of a floating table. Note that, for IEEE style tables, the
+% \caption command should come BEFORE the table and, given that table
+% captions serve much like titles, are usually capitalized except for words
+% such as a, an, and, as, at, but, by, for, in, nor, of, on, or, the, to
+% and up, which are usually not capitalized unless they are the first or
+% last word of the caption. Table text will default to \footnotesize as
+% the IEEE normally uses this smaller font for tables.
+% The \label must come after \caption as always.
+%
+%\begin{table}[!t]
+%% increase table row spacing, adjust to taste
+%\renewcommand{\arraystretch}{1.3}
+% if using array.sty, it might be a good idea to tweak the value of
+% \extrarowheight as needed to properly center the text within the cells
+%\caption{An Example of a Table}
+%\label{table_example}
+%\centering
+%% Some packages, such as MDW tools, offer better commands for making tables
+%% than the plain LaTeX2e tabular which is used here.
+%\begin{tabular}{|c||c|}
+%\hline
+%One & Two\\
+%\hline
+%Three & Four\\
+%\hline
+%\end{tabular}
+%\end{table}
+
+
+% Note that the IEEE does not put floats in the very first column
+% - or typically anywhere on the first page for that matter. Also,
+% in-text middle ("here") positioning is typically not used, but it
+% is allowed and encouraged for Computer Society conferences (but
+% not Computer Society journals). Most IEEE journals/conferences use
+% top floats exclusively. 
+% Note that, LaTeX2e, unlike IEEE journals/conferences, places
+% footnotes above bottom floats. This can be corrected via the
+% \fnbelowfloat command of the stfloats package.
+
+
+
+
+
+
+
+% trigger a \newpage just before the given reference
+% number - used to balance the columns on the last page
+% adjust value as needed - may need to be readjusted if
+% the document is modified later
+%\IEEEtriggeratref{8}
+% The "triggered" command can be changed if desired:
+%\IEEEtriggercmd{\enlargethispage{-5in}}
+
+% references section
+
+% can use a bibliography generated by BibTeX as a .bbl file
+% BibTeX documentation can be easily obtained at:
+% http://mirror.ctan.org/biblio/bibtex/contrib/doc/
+% The IEEEtran BibTeX style support page is at:
+% http://www.michaelshell.org/tex/ieeetran/bibtex/
+%\bibliographystyle{IEEEtran}
+% argument is your BibTeX string definitions and bibliography database(s)
+%\bibliography{IEEEabrv,../bib/paper}
+%
+% <OR> manually copy in the resultant .bbl file
+% set second argument of \begin to the number of references
+% (used to reserve space for the reference number labels box)
+\begin{thebibliography}{1}
+
+\bibitem{paraprox}
+Mehrzad Samadi, Davoud Anoushe Jamshidi, Janghaeng Lee, and Scott Mahlke. 2014. Paraprox: pattern-based approximation for data parallel applications. In Proceedings of the 19th international conference on Architectural support for programming languages and operating systems (ASPLOS '14). ACM, New York, NY, USA, 35-50. DOI=http://dx.doi.org/10.1145/2541940.2541948 
+\end{thebibliography}
+
+
+
+
+% that's all folks
+\end{document}
+
+
