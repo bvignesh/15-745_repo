@@ -1,0 +1,19 @@
+This pass takes information about shared variables found in loadModStore pass
+(possible approximation targets) and finds more information about these values for
+the other pass
+
+Specifically, the information found includes:
+> identifying the allocation sites for the shared variable
+> identifying lock, unlock points
+> identifying the merge operation
+> identifying the points where threads are spawned
+
+THe API of this pass is similar to the previous pass. The following functions can
+be used to find the location in code of each of the afore mentioned information for
+each shared variable (allocation site, merge points, etc) 
+
+> std::vector<Instruction* > *getDuplicationPoints()
+> std::vector<Instruction* > *getMergePoints()
+> std::vector<Instruction* > *getInitPoints()
+> std::vector<Instruction* > *getLockPoints()
+> std::vector<Instruction* > *getUnlockPoints()
