@@ -143,5 +143,5 @@ namespace {
 // LLVM uses the address of this static member to identify the pass, so the
 // initialization value is unimportant.
 char loadModStore::ID = 0;
-static RegisterPass<loadModStore> X("loadModStore", "15745: Find load modify store pattern", false, false);
+static RegisterPass<loadModStore> Y("loadModStore", "15745: Find load modify store pattern", false, false);
 }
