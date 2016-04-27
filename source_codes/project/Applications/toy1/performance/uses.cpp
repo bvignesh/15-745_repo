@@ -9,7 +9,7 @@
 #include <ctime>
 #include "gups.h"
 
-#define NLOOPS 1000000  
+#define NLOOPS 1000000
 
 int INPUT_SIZE;
 int TABLE_SIZE;
@@ -23,13 +23,47 @@ double post_parallel_phase();
 using namespace std;
 int *data;
 
-/*The approximation targets*/
-double x1, x2, x3;    // The approximation targets
+void* cmalloc(size_t s, int index) {
+	return malloc(s);
+}
+
+/*The approximation targets (declared as cdata)*/
+double x1, x2;	//only x3 is approximated 
+/*
+double* x1 = (double *)cmalloc(sizeof(double),0);
+double* x2 = (double *)cmalloc(sizeof(double),1);
+*/
+double* x3 = (double *)cmalloc(sizeof(double),0);
 
 /*locks for each approximation target*/
 pthread_mutex_t lock1, lock2, lock3;
 
+void start_region(int tid, int loc) {
+	/*
+	if (loc == 0)
+		pthread_mutex_lock(&lock1);
+	if (loc == 1)
+                pthread_mutex_lock(&lock2);
+	
+	if (loc == 2)
+        */
+        pthread_mutex_lock(&lock3);	
+}
 
+void end_region(int tid, int loc) {
+        /*
+	if (loc == 0)
+		pthread_mutex_unlock(&lock1);
+	if (loc == 1)
+                pthread_mutex_unlock(&lock2);
+        if (loc == 2)
+	*/
+        pthread_mutex_unlock(&lock3);
+}
+
+void do_merge(int tid) {}
+
+void register_tids(int* tids, int nindices, int locks) {}
 
 int tids[NUM_THREADS];
 
@@ -49,7 +83,9 @@ int main(int argc, char** argv) {
     pthread_t threads[NUM_THREADS];
     int ret;
     
-//    read_in();
+    register_tids(tids,1,1);
+
+    //read_in();
 
     // Now we launch threads to go through the data and increment the counter accordingly.
     for (int i = 0; i < NUM_THREADS; i++) {
@@ -66,7 +102,7 @@ int main(int argc, char** argv) {
     }
 
     double p_output = post_parallel_phase();
-     std::cout << "Program output is " << p_output/(double)NLOOPS << "\n";    
+    std::cout << "Program output = " << p_output << "\n";    
     return p_output;  //might be useful from liveness analysis perspective
 }
 
@@ -77,16 +113,17 @@ void * incr_function(void * dummy) {
     for (int i = 0; i < NLOOPS; i++) {
         
 	pthread_mutex_lock(&lock1);
-        x1 += (double)tid*((double)i/(double)NLOOPS);  			//Update to shared variable that is different in different cores
+        x1 += tid*i;  			//Update to shared variable that is different in different cores
         pthread_mutex_unlock(&lock1);
 	pthread_mutex_lock(&lock2);
-        x2 += (double)tid*((double)i/(double)NLOOPS);                    //Update to shared variable that is different in different cores
-        pthread_mutex_unlock(&lock2);
-	pthread_mutex_lock(&lock3);
-        x3 += (double)tid*((double)i/(double)NLOOPS);                    //Update to shared variable that is different in different cores
-        pthread_mutex_unlock(&lock3);
-	
+        x2 += tid*i;                    //Update to shared variable that is different in different cores        
+	pthread_mutex_unlock(&lock2);
+	start_region(tid, 0);
+        x3[0] += tid*i;                    //Update to shared variable that is different in different cores
+        end_region(tid, 0);
+    //std::cout << "finished iteration " << i << "\n";	
     }
+    do_merge(tid);  
 }
 
 /*
@@ -107,7 +144,7 @@ double post_parallel_phase() {
 	/* Random computations that will fit a basic block */
 	y1 = x1 + 17;
 	y2 = x2 + 19;
-	y3 = x3 + 23;
+	y3 = x3[0] + 23;
 	
 	y1 = x1*y1;
 	y2 = x2*y2*y2;
@@ -118,7 +155,7 @@ double post_parallel_phase() {
 	y2 = y2/x1;
 	y3 = y3/x1;
 
-	final_out = x1 + x2 + x3;  
+	final_out = y1 + y2 + y3;  
 	return final_out;
 
 	

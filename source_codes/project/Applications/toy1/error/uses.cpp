@@ -9,7 +9,9 @@
 #include <ctime>
 #include "gups.h"
 
-#define NLOOPS 1000000  
+#define NLOOPS 1000000 
+
+#define MERGE_NO 3  //This number controls degree of approximation
 
 int INPUT_SIZE;
 int TABLE_SIZE;
@@ -24,7 +26,11 @@ using namespace std;
 int *data;
 
 /*The approximation targets*/
-double x1, x2, x3;    // The approximation targets
+double x1_c, x2_c, x3_c;
+double x3[NUM_THREADS];  //Checking incoherence of x3 alone
+double x2[NUM_THREADS];
+double x1[NUM_THREADS];
+
 
 /*locks for each approximation target*/
 pthread_mutex_t lock1, lock2, lock3;
@@ -49,7 +55,7 @@ int main(int argc, char** argv) {
     pthread_t threads[NUM_THREADS];
     int ret;
     
-//    read_in();
+    //read_in();
 
     // Now we launch threads to go through the data and increment the counter accordingly.
     for (int i = 0; i < NUM_THREADS; i++) {
@@ -66,7 +72,7 @@ int main(int argc, char** argv) {
     }
 
     double p_output = post_parallel_phase();
-     std::cout << "Program output is " << p_output/(double)NLOOPS << "\n";    
+    std::cout << "Program output is " << p_output/(double)NLOOPS << "\n"; 
     return p_output;  //might be useful from liveness analysis perspective
 }
 
@@ -77,16 +83,42 @@ void * incr_function(void * dummy) {
     for (int i = 0; i < NLOOPS; i++) {
         
 	pthread_mutex_lock(&lock1);
-        x1 += (double)tid*((double)i/(double)NLOOPS);  			//Update to shared variable that is different in different cores
+        x1[tid] += (double)tid*((double)i/(double)NLOOPS);  			//Update to shared variable that is different in different cores
         pthread_mutex_unlock(&lock1);
 	pthread_mutex_lock(&lock2);
-        x2 += (double)tid*((double)i/(double)NLOOPS);                    //Update to shared variable that is different in different cores
+        x2[tid] += (double)tid*((double)i/(double)NLOOPS);                    //Update to shared variable that is different in different cores
         pthread_mutex_unlock(&lock2);
 	pthread_mutex_lock(&lock3);
-        x3 += (double)tid*((double)i/(double)NLOOPS);                    //Update to shared variable that is different in different cores
+        x3[tid] += (double)tid*((double)i/(double)NLOOPS);                    //This models x3 being incoherent
         pthread_mutex_unlock(&lock3);
 	
     }
+    /* the merge function */
+    int temp; 
+    double merge_value1 = 0.0; 
+    double merge_value2 = 0.0;
+    double merge_value3 = 0.0;
+    int x = 0;
+    while (x < MERGE_NO) {
+    srand(x);
+    temp = rand()%NUM_THREADS;
+    merge_value1 += x3[temp];
+    srand(x + 1);
+    temp = rand()%NUM_THREADS;
+    merge_value2 += x2[temp];
+    srand(x + 2);
+    temp = rand()%NUM_THREADS;
+    merge_value3 += x1[temp];
+
+    x++;
+    }
+    x3_c = (merge_value1/MERGE_NO)*(NUM_THREADS - MERGE_NO);  // this is the approximation
+    x3_c = merge_value1 + x3_c;
+    x2_c = (merge_value2/MERGE_NO)*(NUM_THREADS - MERGE_NO);  // this is the approximation
+    x2_c = merge_value2 + x2_c;
+    x3_c = (merge_value3/MERGE_NO)*(NUM_THREADS - MERGE_NO);  // this is the approximation
+    x3_c = merge_value3 + x1_c;
+
 }
 
 /*
@@ -105,20 +137,20 @@ void read_in() {
 double post_parallel_phase() {
 	double y1, y2, y3, final_out;
 	/* Random computations that will fit a basic block */
-	y1 = x1 + 17;
-	y2 = x2 + 19;
-	y3 = x3 + 23;
+	y1 = x1_c + 17;
+	y2 = x2_c + 19;
+	y3 = x3_c + 23;
 	
-	y1 = x1*y1;
-	y2 = x2*y2*y2;
+	y1 = x1_c*y1;
+	y2 = x2_c*y2*y2;
 	
-	y1 = y1 + x1;
+	y1 = y1 + x1_c;
 	
-	y1 = y1/x2;
-	y2 = y2/x1;
-	y3 = y3/x1;
+	y1 = y1/x2_c;
+	y2 = y2/x1_c;
+	y3 = y3/x1_c;
 
-	final_out = x1 + x2 + x3;  
+	final_out = x1_c + x2_c + x3_c;  
 	return final_out;
 
 	
