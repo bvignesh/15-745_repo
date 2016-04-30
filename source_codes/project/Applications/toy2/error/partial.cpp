@@ -27,7 +27,9 @@ using namespace std;
 int *data;
 
 /*The approximation targets*/
-double x1, x2, x3;    // The approximation targets
+double x1, x2, x3_c;    // The approximation targets
+
+double x3[NTHREADS];   //TODO: Junhan declare more variables as arrays for greater approximation
 
 /*locks for each approximation target*/
 pthread_mutex_t lock1, lock2, lock3;
@@ -85,10 +87,38 @@ void * incr_function(void * dummy) {
         x2 += tid*i;                    //Update to shared variable that is different in different cores
         pthread_mutex_unlock(&lock2);
 	pthread_mutex_lock(&lock3);
-        x3 += tid*i;                    //Update to shared variable that is different in different cores
+        x3[tid] += tid*i;                    //Update to shared variable that is different in different cores
         pthread_mutex_unlock(&lock3);
 	
     }
+    pthread_mutex_lock(&lock1);
+    int temp;
+    double merge_value1 = 0.0;
+    double merge_value2 = 0.0;
+    double merge_value3 = 0.0;
+    int x = 0;
+    while (x < MERGE_NO) {
+    srand(x);
+    temp = rand()%NUM_THREADS;
+    merge_value1 += x3[temp];
+    //srand(x + 1);
+    //temp = rand()%NUM_THREADS;
+    //merge_value2 += x2[temp];
+    //srand(x + 2);
+    //temp = rand()%NUM_THREADS;
+    //merge_value3 += x1[temp];
+
+    x++;
+    }
+    x3_c = (merge_value1/MERGE_NO)*(NUM_THREADS - MERGE_NO);  // this is the approximation
+    x3_c = merge_value1 + x3_c;
+    //x2_c = (merge_value2/MERGE_NO)*(NUM_THREADS - MERGE_NO);  // this is the approximation
+    //x2_c = merge_value2 + x2_c;
+    //x3_c = (merge_value3/MERGE_NO)*(NUM_THREADS - MERGE_NO);  // this is the approximation
+    //x3_c = merge_value3 + x1_c;
+    pthread_mutex_unlock(&lock1);
+
+ 	
 }
 
 /*
@@ -122,11 +152,11 @@ double post_parallel_phase() {
 	}
 	srand(time(NULL));
 	if (rand() % 100 > 90) {
-                y3 = x3 + 11;
+                y3 = x3_c + 11;
                 y1 = y1 + x1;
         }
         else {
-                y3 = x3 + 15;
+                y3 = x3_c + 15;
         }
 	srand(time(NULL));
 	if (rand() % 100 > 95) {
@@ -134,7 +164,7 @@ double post_parallel_phase() {
                 y1 = y1 * x1;
         }
         else { 
-                y3 = x3 + 15;
+                y3 = x3_c + 15;
 		y2 = x2 * y2;
 		y1 = y1 - x1;
         }
