@@ -11,7 +11,7 @@
 #include <time.h>
 #include <stdlib.h>
 
-
+#define MERGE_NO 3  //controls degree of approximation
 #define NLOOPS 1000000  
 
 int INPUT_SIZE;
@@ -29,7 +29,7 @@ int *data;
 /*The approximation targets*/
 double x1, x2, x3_c;    // The approximation targets
 
-double x3[NTHREADS];   //TODO: Junhan declare more variables as arrays for greater approximation
+double x3[NUM_THREADS];   //TODO: Junhan declare more variables as arrays for greater approximation
 
 /*locks for each approximation target*/
 pthread_mutex_t lock1, lock2, lock3;
