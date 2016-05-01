@@ -12,7 +12,7 @@
 #include <stdlib.h>
 
 #define MERGE_NO 3  //controls degree of approximation
-#define NLOOPS 1000000  
+#define NLOOPS 1000  
 
 int INPUT_SIZE;
 int TABLE_SIZE;
@@ -41,7 +41,7 @@ int tids[NUM_THREADS];
 
 
 int main(int argc, char** argv) {
-    if (argc != 3) {
+    if (argc != 2) {
         printf("usage: ./uses <input size> <table size>\n");
         return -1;
     }
@@ -71,7 +71,7 @@ int main(int argc, char** argv) {
     }
 
     double p_output = post_parallel_phase();
-    
+    std::cout << " Program output is " << p_output << "\n";    
     return p_output;  //might be useful from liveness analysis perspective
 }
 
@@ -81,13 +81,13 @@ void * incr_function(void * dummy) {
     /*all the shared variables are being updated the same way*/
     for (int i = 0; i < NLOOPS; i++) {
         pthread_mutex_lock(&lock1);
-        x1 += tid*i;  			//Update to shared variable that is different in different cores
+        x1 += (double)tid*((double)i/(double)NLOOPS);  			//Update to shared variable that is different in different cores
         pthread_mutex_unlock(&lock1);
 	pthread_mutex_lock(&lock2);
-        x2 += tid*i;                    //Update to shared variable that is different in different cores
+        x2 += (double)tid*((double)i/(double)NLOOPS);                    //Update to shared variable that is different in different cores
         pthread_mutex_unlock(&lock2);
 	pthread_mutex_lock(&lock3);
-        x3[tid] += tid*i;                    //Update to shared variable that is different in different cores
+        x3[tid] += (double)tid*((double)i/(double)NLOOPS);               //Update to shared variable that is different in different cores
         pthread_mutex_unlock(&lock3);
 	
     }
