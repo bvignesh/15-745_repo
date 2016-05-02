@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.5.24)  1 MAY 2016 23:15
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.5.24)  2 MAY 2016 17:58
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -218,53 +218,69 @@ G,.JBIG2,.JB2,.eps]
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
-Underfull \vbox (badness 10000) has occurred while \output is active []
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 73.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line 73.
 
- [1{/usr/local/texlive/2015/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
+[1{/usr/local/texlive/2015/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
 
 
-] [2]
-Underfull \hbox (badness 1635) in paragraph at lines 262--270
-\OT1/ptm/m/n/12 to search for shared data in pro-grams whose
+]
+<incoherent.pdf, id=11, 555.07375pt x 208.78pt>
+File: incoherent.pdf Graphic file (type pdf)
+ <use incoherent.pdf>
+Package pdftex.def Info: incoherent.pdf used on input line 167.
+(pdftex.def)             Requested size: 258.0pt x 97.04027pt.
+
+Overfull \hbox (6.0pt too wide) in paragraph at lines 167--168
+ [][] 
  []
 
-
-Underfull \hbox (badness 10000) in paragraph at lines 262--270
-
- []
-
-[3] <Heuristic1.pdf, id=14, 365.365pt x 435.6275pt>
+[2 <./incoherent.pdf>] [3] <Heuristic1.pdf, id=21, 365.365pt x 435.6275pt>
 File: Heuristic1.pdf Graphic file (type pdf)
- <use Heuristic1.pdf>
-Package pdftex.def Info: Heuristic1.pdf used on input line 296.
-(pdftex.def)             Requested size: 180.60315pt x 215.33383pt.
 
-<Heuristic2.pdf, id=15, 273.02pt x 606.265pt>
+<use Heuristic1.pdf>
+Package pdftex.def Info: Heuristic1.pdf used on input line 303.
+(pdftex.def)             Requested size: 206.39685pt x 246.0901pt.
+ <Heuristic2.pdf, id=22, 273.02pt x 606.265pt>
 File: Heuristic2.pdf Graphic file (type pdf)
- <use Heuristic2.pdf>
-Package pdftex.def Info: Heuristic2.pdf used on input line 327.
-(pdftex.def)             Requested size: 154.80157pt x 343.75223pt.
 
-<Heuristic3.pdf, id=16, 385.44pt x 395.4775pt>
+<use Heuristic2.pdf>
+Package pdftex.def Info: Heuristic2.pdf used on input line 334.
+(pdftex.def)             Requested size: 154.80157pt x 343.75223pt.
+ [4 <./Heuristic1.pdf> <./Heuristic2.pdf>]
+<Heuristic3.pdf, id=32, 385.44pt x 395.4775pt>
 File: Heuristic3.pdf Graphic file (type pdf)
  <use Heuristic3.pdf>
-Package pdftex.def Info: Heuristic3.pdf used on input line 344.
-(pdftex.def)             Requested size: 232.19843pt x 238.24178pt.
- [4 <./Heuristic1.pdf> <./Heuristic2.pdf>] [5 <./Heuristic3.pdf>]
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <12> on input line 475.
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <8> on input line 475.
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <6> on input line 475.
- [6]
-Underfull \hbox (badness 4726) in paragraph at lines 643--644
-[]\OT1/ptm/m/n/9 L Ren-ga-narayana, V Srini-vasan, R Nair, D Prener, C
+Package pdftex.def Info: Heuristic3.pdf used on input line 356.
+(pdftex.def)             Requested size: 206.39685pt x 211.76845pt.
+
+<result.png, id=33, 1529.715pt x 774.895pt>
+File: result.png Graphic file (type png)
+ <use result.png>
+Package pdftex.def Info: result.png used on input line 373.
+(pdftex.def)             Requested size: 490.19843pt x 248.31436pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+Underfull \hbox (badness 1642) in paragraph at lines 412--420
+[]\OT1/ptm/m/n/12 As syn-chro-niza-tion ap-prox-i-ma-tion have been
+ []
+
+[5 <./Heuristic3.pdf>]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+Underfull \hbox (badness 1946) in paragraph at lines 574--576
+\OT1/ptm/m/n/9 Mx Many-core Pro-ces-sor, http://www.tilera.com/files/drim[][]
  []
 
 
-Underfull \hbox (badness 1755) in paragraph at lines 643--644
-\OT1/ptm/m/n/9 Blun-dell,Relaxing syn-chro-niza-tion for per-for-mance and in-
+Underfull \hbox (badness 3281) in paragraph at lines 578--579
+[]\OT1/ptm/m/n/9 L Ren-ga-narayana, V Srini-vasan, R Nair, D Prener, C
  []
 
 Missing character: There is no ‚ in font ptmr7t!
@@ -276,41 +292,16 @@ Missing character: There is no ù in font ptmr7t!
 Missing character: There is no ‚ in font ptmr7t!
 Missing character: There is no Ä in font ptmr7t!
 Missing character: There is no ô in font ptmr7t!
-
-Underfull \hbox (badness 10000) in paragraph at lines 651--652
-[]\OT1/ptm/m/n/9 Chi-Keung Luk, Robert Cohn, Robert Muth, Har-ish
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 651--652
-\OT1/ptm/m/n/9 Patil, Ar-tur Klauser, Ge-off Lowney, Steven Wal-lace,
- []
-
-
-Underfull \hbox (badness 6995) in paragraph at lines 651--652
-\OT1/ptm/m/n/9 Vi-jay Janapa Reddi, and Kim Hazel-wood. 2005. Pin:
- []
-
-
-Underfull \hbox (badness 1946) in paragraph at lines 651--652
-\OT1/ptm/m/n/9 build-ing cus-tomized pro-gram anal-y-sis tools with dy-namic
- []
-
-
-Underfull \hbox (badness 5802) in paragraph at lines 654--655
-[]\OT1/ptm/m/n/9 Mehrzad Samadi, Davoud Anoushe Jamshidi, Jang-haeng
- []
-
-
-Underfull \hbox (badness 7981) in paragraph at lines 654--655
-\OT1/ptm/m/n/9 prox-i-ma-tion for data par-al-lel ap-pli-ca-tions. In Pro-ceed-
-
- []
-
-
-Underfull \hbox (badness 5519) in paragraph at lines 654--655
-\OT1/ptm/m/n/9 ings of the 19th in-ter-na-tional con-fer-ence on Ar-chi-tec-
- []
+[6 <./result.png>]
+Missing character: There is no ‚ in font ptmr7t!
+Missing character: There is no Ä in font ptmr7t!
+Missing character: There is no ú in font ptmr7t!
+Missing character: There is no ‚ in font ptmr7t!
+Missing character: There is no Ä in font ptmr7t!
+Missing character: There is no ù in font ptmr7t!
+Missing character: There is no ‚ in font ptmr7t!
+Missing character: There is no Ä in font ptmr7t!
+Missing character: There is no ô in font ptmr7t!
 
 
 ** Conference Paper **
@@ -327,22 +318,23 @@ Before submitting the final camera ready copy, remember to:
 
 ] (./proposal.aux) ) 
 Here is how much of TeX's memory you used:
- 2334 strings out of 493089
- 38424 string characters out of 6134842
- 105857 words of memory out of 5000000
- 5815 multiletter control sequences out of 15000+600000
- 33618 words of font info for 67 fonts, out of 8000000 for 9000
+ 2336 strings out of 493089
+ 38489 string characters out of 6134842
+ 104893 words of memory out of 5000000
+ 5821 multiletter control sequences out of 15000+600000
+ 31978 words of font info for 59 fonts, out of 8000000 for 9000
  1144 hyphenation exceptions out of 8191
- 37i,7n,23p,380b,234s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 37i,7n,23p,335b,234s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2015/texmf-dist/fonts/enc/dvips/base/8r
-.enc}</usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.p
-fb></usr/local/texlive/2015/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/l
-ocal/texlive/2015/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texli
-ve/2015/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on proposal.pdf (7 pages, 102398 bytes).
+.enc}</usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.
+pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/
+local/texlive/2015/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb></usr/local/tex
+live/2015/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2015/
+texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on proposal.pdf (7 pages, 316141 bytes).
 PDF statistics:
- 57 PDF objects out of 1000 (max. 8388607)
- 40 compressed objects within 1 object stream
+ 68 PDF objects out of 1000 (max. 8388607)
+ 47 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 16 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 26 words of extra memory for PDF output out of 10000 (max. 10000000)
 

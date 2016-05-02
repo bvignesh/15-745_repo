@@ -55,9 +55,25 @@ Email: vigneshb@andrew.cmu.edu}}
 
 % As a general rule, do not put math, special symbols or citations
 % in the abstract
-%\begin{abstract}
-%The abstract goes here.
-%\end{abstract}
+\begin{abstract}
+Approximating computing is a growing domain as a growing field of
+applications tolerate degradation in the quality of the result in
+exchange for performance. And parallel programming is one of the
+many fields in approximating computing which is gaining attention.
+Parallel programs tends to have scalability issues due to high
+synchronization and data movement costs, while there are previous
+research to deal with approximating synchronization and restricting
+data accesses, none have done with approximate the cache coherence
+to limit data movement between cores. In this paper we are going
+to propose an architecture which have incoherent cache support,
+then we uses the compiler to statically analysis the program to
+determine the potential places the incoherent cache is put into
+use. Our evaluation shows that by using our heuristics we can
+achieve a decent speedup in performance (1.4x) whill maintaining
+a low introduced error ratio ($<$10\%), and in some cases can even
+achieve a performance gain of nearly 2x without much quality
+degradation.
+\end{abstract}
 
 % no keywords
 
@@ -78,16 +94,16 @@ Email: vigneshb@andrew.cmu.edu}}
 
 \section{Introduction}
 
-Since the availability of multicore CPUs is widely introduced in the
+Since the availability of multicore CPUs is widely made in the
 early 2000s, the concept of parallel computing have been widely accepted 
 and extensively implemented. Developers developed parallel versions
 of algorithms, making uses of all the cores provided. But more often then not
 there are some shared data accessed and modified by more then one
 thread during the computation. This introduces data movement between
 separate core's cache, which recent research have identified as one of the major
-impediments to continued performance scaling with increasing core counts, which
-is a big issue in systems with big core counts like Tilera's TILE-mx100 SoC 
-which delivers 100 ARM cores on a single chip.
+impediments to continued performance scaling with increasing core counts. This
+is a big issue in systems with big core counts like the Tilera's TILE-mx100 SoC 
+which delivers 100 ARM cores on a single chip\cite{tile}.
 
 On the other hand, approximating computing have became an emerging topic
 as a growing class of applications, like image processing, data mining 
@@ -142,10 +158,16 @@ APPROX instruction it marks and put the provided argument into the incoherent
 cache, and each core's access and modify to the data only affects the local
 copy inside it's incoherent cache until it hits the MERGE instruction. The
 MERGE instruction acts as an implicit barrier where only when all cores
-who have the shared data reaches will the architecture does a merge of the
+who have the shared data reaches will the architecture do a merge of the
 incoherent copies of the data similar to the approximate version of reduction
 in \cite{paraprox}. After this point the data is in the coherent part of the
 cache and all subsequent uses of this shared data follows the MESI protocol.
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.50\textwidth]{incoherent.pdf}
+    \caption{Values are split into each core's incoherent cache after APPROX and merged back to the coherent cache at MERGE}
+    \label{fig:incoherent}
+\end{figure}
 
 We wanted to measure both the performance improvement and the potential
 error of our incoherent cache approximation, unfortunately there isn't
@@ -171,18 +193,18 @@ for quite some time.
 
 For our purpose we modeled a part of each core's L1 cache as incoherent
 in the simulator, using PIN's routine instrumentation and identifying
-special instructions that we marked in the code (particular blank function 
-calls which takes an argument that the simulator can then see marked as 
-being stored in the incoherent cache), it can identify the 
-data that needs to be stored in the incoherent cache and stores the
+special instructions that we marked in the code (particular blank or 
+wrapper function calls which takes an argument that the simulator can 
+then see marked as being stored in the incoherent cache), it can identify 
+the data that needs to be stored in the incoherent cache and stores the
 tag values in the cache. We also inserted blank \textit{do\_ merge()}
 functions which tells the simulator the place to merge the incoherent
 data in the cache and adds the corresponding cycle counts. In the 
 coherent part of the program the coherent value is used while in the
-incoherent part a separate incoherent value marked as mentioned above
+incoherent part a separate incoherent value (marked as mentioned above)
 is substituted and used, as we are not worrying about the error in
-this program, we are only interested of the total cycle count after
-it's execution this approach is simple yet sufficient for us to use.
+this program, we are only interested in the total cycle count after
+it's execution, this approach is simple yet sufficient for us to use.
 To be noted as we are using incoherence caches, it makes no sense
 to keeping the synchronization guards aka locks guarding the shared
 data, so we didn't account for any cycle counts for the locking and
@@ -193,7 +215,7 @@ In order to evaluate the error in a program due to incoherent
 manipulation of data, for each shared data to be made incoherent,
 we declared a separate array the size of the shared data multiplied
 by the number of threads used in the program (which is either given
-as a define or passed to the program as the first argument). Each 
+as a \#define or passed to the program as the first argument). Each 
 thread spawned is given a unique tid going from 0,1... that is used
 to access it's local private copy of the shared data. In place where
 the APPROX instruction should be inserted the value of the data is
@@ -237,7 +259,7 @@ the candidates, the value given to the load instruction might be generated
 by a \textit{getelementptr} instruction which calculate the offset address
 in an array, by another \textit{load} instruction which loads the address 
 in the case of a pointer pointer, or a mixture of both, so in our pass we 
-have to find the initial value used to calculate the addresses, so if the 
+have to find the initial value used to calculate the address, so if the 
 address is generated by another instruction we keep reverse tracking until 
 we hit a globally declared variable which we recognizes as the origin of the
 shared variable which we pass on to our further pass.
@@ -247,7 +269,7 @@ checking is the variable is used to determine the control flow of the
 program, as if approximating a shared variable into a value that should
 never be considered correct could result in non-deterministic control 
 flow in the program and might result in a non-terminated program. Also
-in our simulator the approximated data is never calculated so if
+in our simulator the approximated data is never calculated so 
 approximating the variable could lead to serious problems in our
 simulator. We implemented this by finding all use cases of the candidate
 and see if the value calculated using the candidate value is used in 
@@ -266,7 +288,7 @@ to search for shared data in programs whose correctness is not critical to
 program quality. Given the list of potential candidates from the last
 pass, we need to provide heuristics on identifying data that when
 approximated estimated to not cause significant quality degradation.
-\\
+
 \subsubsection{Estimating Importance of Program Variables}
 
 Our first heuristics is to estimate the \emph{importance} of 
@@ -276,6 +298,12 @@ can also build a tree of it's own including the uses of the values
 calculated using the shared variable, but for the sake of simplicity
 we only used the first level of uses of the shared data as a proxy 
 to the importance of the shared variable.
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.40\textwidth]{Heuristic1.pdf}
+    \caption{Heuristic1: Variables that are used less might be better approximation targets}
+    \label{fig:h1}
+\end{figure}
 
 We think variables that are used less might be better approximation 
 targets (lead to lesser quality degradation). For example the scan
@@ -288,15 +316,8 @@ on the last few elements after the scan operation.
 For each data passed in from the previous pass this pass counts all 
 the uses of each respective data, given the aggressiveness of 
 the approximation in this case the threshold of the number of 
-uses for a variable, it determines whether the variable should 
+uses for a variable, we can determine whether a variable should 
 be approximated or not.
-
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=0.35\textwidth]{Heuristic1.pdf}
-    \caption{Heuristic1: Variables that are used less might be better approximation targets}
-    \label{fig:h1}
-\end{figure}
 
 \subsubsection{Quality impact of approximating variables}
 
@@ -305,9 +326,15 @@ by analyzing the place of use of the variable down the control flow. If the
 variable only appear on few paths, like only in one part of an unlikely taken
 branch path, then it is not likely to cause significant quality degradation
 on the program. More often then not the variable might not even be used by the
-control flow of many instances of the program execution. Else wise if a variable
+control flow of many instances of the program execution. Elsewise if a variable
 is used on all paths down the control flow then it certainly would have a
 quality impact on the given program.
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.30\textwidth]{Heuristic2.pdf}
+    \caption{Heuristic2: Variables that appear only on few paths are not likely to cause significant quality degradation}
+    \label{fig:h2}
+\end{figure}
 
 We implemented this pass by not only counting the uses of the potential shared
 variables given, but also locate the use sites, that is in which basic block each
@@ -320,197 +347,101 @@ uses every instance of the use is only accounted for one time. After all the set
 are constructed, we traverse through the control flow graph and see which variable
 is used only in certain path and which variable is used in all path. Given the
 aggressiveness of approximation, in this case the path frequency where the variable
-would be used, it determines which variables should be approximated or not.
-
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=0.30\textwidth]{Heuristic2.pdf}
-    \caption{Heuristic2: Variables that appear only on few paths are not likely to cause significant quality degradation}
-    \label{fig:h2}
-\end{figure}
-
+would be used, we can then determine which variable should be approximated or not.
 \subsubsection{Detecting the Imbalance in Computation}
 @TODO Vignesh can you put something more here?
 Detect the amount of computation on variables in different threads.
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.40\textwidth]{Heuristic3.pdf}
+    \caption{Heuristic3: Variables that are heavily operated upon only in a few threads do not need coherence for all threads}
+    \label{fig:h3}
+\end{figure}
 
 This pass is implemented by first identifying all the calls to the 
 \textit{pthread\_ create()} function and getting its third argument, which should
 be the function that the pthread created the thread to launch on. Then for every
 operations in the function counted how many uses of each of the shared 
-variables, this serves as the indicator of the load of the current thread.
+variables, this serves as the indicator of the work amount of the current thread.
 
-\begin{figure}[h]
+
+
+\section{Evaluation}
+
+\begin{figure*}[h]
     \centering
-    \includegraphics[width=0.45\textwidth]{Heuristic3.pdf}
-    \caption{Heuristic3: Variables that are heavily operated upon only in a few threads do not need coherence for all threads}
-    \label{fig:h3}
-\end{figure}
+    \includegraphics[width=0.95\textwidth]{result.png}
+    \caption{Evaluation results on performance and error for the three proposed heuristics}
+    \label{fig:result}
+\end{figure*}
 
-\section{Idea}
+To evaluate the heuristics, we constructed several toy applications for our compiler 
+passes to test out on. We modeled each of our toy application to correspond to a
+particular heuristic that we proposed. That is for heuristic 1 we generated a toy
+application where there are various random uses of the shared variables in the
+sequential portion of the program following the parallel portion (which is a
+common case for parallel programs, like in the map-reduce structure there is
+a massive parallel \emph{map} stage followed by a sequential \emph{reduce} stage),
+and for heuristic 2 we generated the sequential portion to include lots of different
+control flows with a lot of if-else structures. For heuristic 3, as parallel
+computations is not just single instruction multiple data (SIMD) type, we gave 
+the \textit{pthread\_ create()} for each thread a different work function
+with different work loads inside each of them.
 
-Most modern multi-core processors implement data movement among cores
-using cache coherence. In this project, we wish to explore the impact 
-of cutting
-coherence operations on the performance of applications and the 
-resulting quality degradation. 
+We evaluated our results by first running the original application directly for
+its intended output, then gave it to our PIN simulator to see the cycle
+counts for running this application. After having the results for the precise
+version of the program, we gave it to our shared variables finding pass and
+passed it along to its corresponding heuristic pass. Upon using the information
+from the heuristic pass we tested various levels of approximation aggressiveness
+generating the various approximated version of the program into the performance
+and error evaluation version. We then gave the performance version to our simulator
+to get the cycle count of the approximated version and run the error version to
+see the approximated result and finally compared it with the results of the
+original version.
 
-Our mechanism of cutting cache coherence is to partition the
-existing L1 cache, private to each core, into coherent and 
-incoherent parts. The incoherent cache will not
-enforce any form of coherence among multiple cores and, thus,
-houses data that is strictly private to a core. The benefit of having private
-data is reduced communication among cores, which is essentially a 
-serializing operation in a parallel execution. 
+The results of our evaluation can be seen in figure \ref{fig:result}. As we can
+see, the performance ...@TODO Vignesh can you put in the results for the
+performance and error here?
 
-While eliminating inter-core communication via data privatization
-will surelyo improve the performance of parallel programs, we must at the same time
-be strategic about our decision as to when to privatize data. This 
-decision controls the quality of a program. This is where we plan to 
-utilize a compiler to identify approximation opportunities that will 
-yield performance improvement at the cost of insignificant error in the
-program output.
+@TODO Vignesh, can you also discuss a bit about the results here? Like the reasons
+for the performance and error gains? What is considered acceptable etc?
 
-In order to estimate the potential damage due to approximation, we aim
-to develop a compiler pass that will analyse the impact of different 
-variables used in a program on program quality. We will then mark data as approximable based 
-on the frequency of data reuse in the program. This pass will be 
-described in greater detail in the next section.
+\section{Conclusion}
 
-\section{Mechanism}
+As synchronization approximation have been tried before, we took one step further
+and also approximated the shared variable guarded by synchronizations by proposing
+our own cache incoherent model of the architecture. And in order to find potential
+good values to approximate, we built compiler passes that first identified the 
+shared variables and then applied heuristics to estimate the potential impact of 
+the variable with uses count, path appearance estimate and imbalance between threads.
+Our results showed a decent improvement for our toy applications while sustaining 
+minimal error rate if not approximated too aggressively.
 
-As mentioned before, we need to strategically place data
-in the incoherent cache in order to contain the error in the 
-program output to tolerable values. Our compiler analysis will search
-for shared data in programs whose correctness is not critical to 
-program quality. In order to do this, we first need to identify 
-shared data that can be approximated. 
+Limitations on our approach is as we are only doing a static analysis of the program,
+we have no way of knowing any run-time dynamic information. Other systems such as 
+\cite{green}\cite{chisel} have done code profiling to get an idea on the dynamic 
+aspects of the code, \cite{ibm}\cite{helixup}\cite{paraprox}\cite{green} all used 
+run time frameworks to dynamically adjust the approximating rate based on the 
+resulting error rate, rewinding and redoing the precise version of the program 
+if the approximate version's result is not ideal ensuring there is a upper
+bound on the quality degradation of the approximated program. Future work can be 
+done here to also build our own run time framework or integrate with one of the 
+available frameworks to provide the dynamic analysis capabilities and rewind on 
+unacceptable error ratio options that we lack now.
 
-As an initial version of the project, we consider data 
-that is guarded by synchronization operations. Prior research 
-in approximate computing has shown that removing synchronization 
-can be an effective way to explore the performance-correctness 
-tradeoff. We extend this concept by stating that if a
-synchronization operation is deemed unnecessary then 
-providing coherence for the data value being guarded is also 
-not essential. In this manner, our compiler pass builds a 
-set of candidates that can be approximated. 
+Future work can also be done by letting the programmer write special code annotations
+to tell our compiler which variable is a good candidate for approximation as in
+\cite{enerJ}\cite{accept}\cite{chisel}. The programmer doesn't need to indicate 
+each and every variable to be approximated, by just telling a potential candidate 
+future work can be done using inductions in the ways of \cite{chisel}\cite{stochastic}
+tracking the uses and users of the given variable to find a good approximate 
+candidate.
 
-The next task is to select the data values, from the 
-above list of possible candidates, that will not cause 
-significant quality degradation. In order to find such
-variables, we perform a liveness analysis of the candidates 
-and determine the program lifetime of each variable. We use
-lifetime as a proxy for the importance of a variable on program
-quality. Variables with shorter lifetimes might not effect program 
-quality much and vice versa. We aim to explore other dataflow 
-analyses and metrics to find relative importance in subsequent
-versions of our pass. We are also considering passing a 
-\emph{quality threshold} as an argument to our pass which can then statically vary the
-amount of variables being approximated. 
+\section{Contributions}
 
-Since our proposal relies on hardware not found in existing 
-architectures, we introduce ISA extensions that will place data into 
-the incoherent cache. Our compiler pass will annotate the binary
-with these special instructions to convey to the hardware (simulated) 
-that the data value must be placed in an incoherent cache. Subsequent
-accesses to the data value by a core will modify the data stored in its
-incoherent, private cache. 
-
-While the previous paragraph discussed moving data from the coherent cache to 
-the incoherent cache, we might also have to do the opposite at times. 
-This could be a way to limit the accumulation of error value in a program. 
-In order to get a coherent copy from at incoherent copy we
-apply an approximation based on the computation being performed
-on the original shared data. For example, if the operation being 
-performed on the original shared data was addition then we 
-apply the updates of the addition to the local value in each core. 
-When it is time to convert the local value to a global value, 
-we randomly select the value from the incoherent cache of one
-of the cores and assume that the other cores also computed 
-the same value and update the local copy with a multiple of the total number of threads. After performing this \emph{approximate merge}
-we place the data in the coherent cache and from this 
-point on all, the cores see a coherent data value.
-
-In the initial version of our compiler pass, we will 
-support only limited computations on shared data and their
-corresponding approximations (which will be similar in the 
-spirit of \cite{paraprox}). We aim to implement more
-general operations in subsequent versions.
-
-\section{Infrastructure}
-
-In order to compute the performance benefit of our approximation
-we will be using a PIN based cache simulator. The simulator adds 
-fixed cycle costs based on the level of cache from which the
-data is accessed (three level cache modeled) and the coherence
-state of the cacheline (MESI protocol modeled). The simulation
-infrastructure is ready and has been in use for other research
-for quite some time.
-
-As part of this project, we will model a part of each cores
-L1 cache as incoherent. Using PIN's routine instrumentation,
-we can identify the data that needs to be stored in the incoherent
-cache (stores only tag values). This way we can compare the 
-execution time of the approximate version against the precise
-version to quantify the performance improvement.
-
-In order to evaluate the error in a program due to incoherent 
-manipulation of data, we will make the compiler convert 
-shared data into thread private data. Based on when the programmer
-wishes to convert an incoherent data into a coherent data (through 
-special functions/ISA extensions), we can randomly select one
-of the thread private data, apply the approximate merge and convert
-back to shared data. While we are actually duplicating data in 
-the program, the logical view of the duplication is basically
-storing the shared data in an incoherent cache. The duplication of data
-allows us to run the effect of no coherence on a native machine
-that has coherence.
-
-
-\section{Project Plan}
-
-We have broken down the project plan into the following steps:
-
-\begin{itemize}
-
-\item Write a compiler pass to identify sychronization operations
-\item Design logic to identify the shared data that is guarded inside
-these synchronization operations and build a list of potential approximation
-targets
-\item Perform liveness analysis on these candidates and characterize 
-variables on the basis of their lifetimes from the start of the approximation
-\item Apply the proper annotations (special functions identified by the simulator)
-for the data values that should be approximated. Also, convert the shared data
-into thread local data.
-\item Identify the programmer routine that indicates the application of 
-approximate merge and add the code to perform the merge into the program's binary
-\item Run the generated \emph{approximate} binary on the simulator and a native machine to get 
-an idea of the performance vs error tradeoff
-\item Add support for more complex dataflow analysis for detection 
-of approximation targets
-\item Add support for more computations that can be approximated
-
-\end{itemize}
-
-\section{Work Distribution}
-
-For the initial version of the compiler pass we will be working in tandem to 
-set up the infrastructure. After the initial pass is complete, we will
-concurrently try to add separate features to the compiler pass.
-
-\section{Project goals}
-
-We have set the following goals for ourselves:
-
-\begin{itemize}
-
-\item \textbf{75\% goal:} Complete code annotation so that if we have any other heurestic
- for approximation then atleast the  performance benefit of the approximation can be tested on the simulation infrastructure
-\item \textbf{100\% goal:} Implement a liveness analysis based pass that detects approximation opportunity for a set of computations on shared data. Explore the sensitivity of the quality threshold on the resultant performance and error values.
-\item \textbf{125\% goal:} Implement other dataflow analyses and test other quality metrics to detect approximationr. Perform experiments to test the performance-accuracy tradeoff of different detection policies. Also, add support for more kinds of computations on shared data
-
-\end{itemize}
-
+Junhan Zhou: 50\%\\
+Vignesh Balaji: 50\%
 
 
 
@@ -637,7 +568,11 @@ We have set the following goals for ourselves:
 % <OR> manually copy in the resultant .bbl file
 % set second argument of \begin to the number of references
 % (used to reserve space for the reference number labels box)
-\begin{thebibliography}{9}
+\begin{thebibliography}{11}
+
+\bibitem{tile}
+Bob Doud, Accelerating the Data Plane With the TILE-Mx Manycore Processor, 
+http://www.tilera.com/files/drim\_\_ EZchip\_LinleyDataCenterConference\_Feb2015\_7671.pdf
 
 \bibitem{ibm}
 L Renganarayana, V Srinivasan, R Nair, D Prener, C Blundell,Relaxing synchronization for performance and insight,Technical Report RC25256, IBM 
@@ -648,13 +583,30 @@ Program Semantics to Unleash Parallelization,” in Proceedings of the 2015 Inte
 Symposium on Code Generation and Optimization (CGO ’15), February 2015.
 
 \bibitem{pin}
-Chi-Keung Luk, Robert Cohn, Robert Muth, Harish Patil, Artur Klauser, Geoff Lowney, Steven Wallace, Vijay Janapa Reddi, and Kim Hazelwood. 2005. Pin: building customized program analysis tools with dynamic instrumentation. SIGPLAN Not. 40, 6 (June 2005), 190-200. DOI=http://dx.doi.org/10.1145/1064978.1065034
+Chi-Keung Luk, Robert Cohn, Robert Muth, Harish Patil, Artur Klauser, Geoff Lowney, Steven Wallace, Vijay Janapa Reddi, and Kim Hazelwood. 2005. Pin: building customized program analysis tools with dynamic instrumentation. SIGPLAN Not. 40, 6 (June 2005), 190-200.
 
 \bibitem{paraprox}
-Mehrzad Samadi, Davoud Anoushe Jamshidi, Janghaeng Lee, and Scott Mahlke. 2014. Paraprox: pattern-based approximation for data parallel applications. In Proceedings of the 19th international conference on Architectural support for programming languages and operating systems (ASPLOS '14). ACM, New York, NY, USA, 35-50. DOI=http://dx.doi.org/10.1145/2541940.2541948
+Mehrzad Samadi, Davoud Anoushe Jamshidi, Janghaeng Lee, and Scott Mahlke. 2014. Paraprox: pattern-based approximation for data parallel applications. In Proceedings of the 19th international conference on Architectural support for programming languages and operating systems (ASPLOS '14). ACM, New York, NY, USA, 35-50. 
 
 \bibitem{llvm}
 Chris Lattner and Vikram Adve. 2004. LLVM: A Compilation Framework for Lifelong Program Analysis \& Transformation. In Proceedings of the international symposium on Code generation and optimization: feedback-directed and runtime optimization (CGO '04). IEEE Computer Society, Washington, DC, USA, 75-.
+
+\bibitem{green}
+Woongki Baek and Trishul M. Chilimbi. 2010. Green: a framework for supporting energy-conscious programming using controlled approximation. SIGPLAN Not. 45, 6 (June 2010), 198-209. 
+
+\bibitem{enerJ}
+Adrian Sampson, Werner Dietl, Emily Fortuna, Danushen Gnanapragasam, Luis Ceze, and Dan Grossman. 2011. EnerJ: approximate data types for safe and general low-power computation. In Proceedings of the 32nd ACM SIGPLAN Conference on Programming Language Design and Implementation (PLDI '11)
+
+\bibitem{accept}
+Sampson, Adrian, et al. "Accept: A programmer-guided compiler framework for practical approximate computing." University of Washington Technical Report UW-CSE-15-01 1 (2015)
+
+\bibitem{chisel}
+Sasa Misailovic, Michael Carbin, Sara Achour, Zichao Qi, and Martin C. Rinard. 2014. Chisel: reliability- and accuracy-aware optimization of approximate computational kernels. In Proceedings of the 2014 ACM International Conference on Object Oriented Programming Systems Languages \& Applications (OOPSLA '14) 
+
+\bibitem{stochastic}
+Eric Schkufza, Rahul Sharma, and Alex Aiken. “Stochastic optimization of floating-point
+programs with tunable precision,” in Proceedings of the 35th ACM SIGPLAN Conference on
+Programming Language Design and Implementation (PLDI ’14), June 2014.
 
 \end{thebibliography}
 % that's all folks
