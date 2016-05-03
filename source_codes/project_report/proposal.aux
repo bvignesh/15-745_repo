@@ -6,47 +6,55 @@
 \@writefile{toc}{\contentsline {section}{\numberline {I}Introduction}{1}}
 \citation{paraprox}
 \citation{pin}
-\@writefile{toc}{\contentsline {section}{\numberline {II}Infrastructure}{2}}
+\@writefile{toc}{\contentsline {section}{\numberline {II}System Description}{2}}
+\newlabel{sec:system}{{II}{2}}
+\newlabel{sec:mech}{{II}{2}}
 \@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Values are split into each core's incoherent cache after APPROX and merged back to the coherent cache at MERGE}}{2}}
 \newlabel{fig:incoherent}{{1}{2}}
 \citation{llvm}
 \@writefile{toc}{\contentsline {section}{\numberline {III}Compiler Analysis}{3}}
+\newlabel{sec:compiler}{{III}{3}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {III-A}}Finding Potential Shared Variables}{3}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {III-B}}Heuristics}{3}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {III-B}}Heuristics}{4}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\unhbox \voidb@x \hbox {III-B}1}Estimating Importance of Program Variables}{4}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\unhbox \voidb@x \hbox {III-B}2}Quality impact of approximating variables on infrequent branch paths}{4}}
 \@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Heuristic1: Variables that are used less might be better approximation targets}}{4}}
 \newlabel{fig:h1}{{2}{4}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {\unhbox \voidb@x \hbox {III-B}2}Quality impact of approximating variables}{4}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Heuristic2: Variables that appear only on few paths are not likely to cause significant quality degradation}}{4}}
-\newlabel{fig:h2}{{3}{4}}
+\citation{coup}
+\citation{paraprox}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Heuristic2: Variables that appear only on few paths are not likely to cause significant quality degradation}}{5}}
+\newlabel{fig:h2}{{3}{5}}
+\newlabel{sec:h3}{{\unhbox \voidb@x \hbox {III-B}3}{5}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\unhbox \voidb@x \hbox {III-B}3}Detecting the Imbalance in Computation}{5}}
 \@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Heuristic3: Variables that are heavily operated upon only in a few threads do not need coherence for all threads}}{5}}
 \newlabel{fig:h3}{{4}{5}}
-\@writefile{toc}{\contentsline {section}{\numberline {IV}Evaluation}{5}}
-\@writefile{toc}{\contentsline {section}{\numberline {V}Conclusion}{5}}
-\citation{green}
-\citation{chisel}
-\citation{ibm}
-\citation{helixup}
-\citation{paraprox}
-\citation{green}
+\@writefile{toc}{\contentsline {section}{\numberline {IV}Experimental Setup and Methodology}{6}}
+\newlabel{sec:setup}{{IV}{6}}
+\@writefile{toc}{\contentsline {section}{\numberline {V}Results}{6}}
+\newlabel{sec:results}{{V}{6}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Evaluation results on performance and error for the three proposed heuristics}}{7}}
+\newlabel{fig:result}{{5}{7}}
+\citation{approx}
 \citation{enerJ}
-\citation{accept}
-\citation{chisel}
-\citation{chisel}
-\citation{stochastic}
+\citation{rely}
 \bibcite{tile}{1}
 \bibcite{ibm}{2}
 \bibcite{helixup}{3}
-\bibcite{pin}{4}
-\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Evaluation results on performance and error for the three proposed heuristics}}{6}}
-\newlabel{fig:result}{{5}{6}}
-\@writefile{toc}{\contentsline {section}{\numberline {VI}Contributions}{6}}
-\@writefile{toc}{\contentsline {section}{References}{6}}
-\bibcite{paraprox}{5}
-\bibcite{llvm}{6}
-\bibcite{green}{7}
-\bibcite{enerJ}{8}
-\bibcite{accept}{9}
-\bibcite{chisel}{10}
-\bibcite{stochastic}{11}
+\bibcite{coup}{4}
+\bibcite{pin}{5}
+\bibcite{paraprox}{6}
+\@writefile{toc}{\contentsline {section}{\numberline {VI}Limitations of our work}{8}}
+\newlabel{sec:limitations}{{VI}{8}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {VI-A}}Quality guarantees}{8}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {VI-B}}Dynamic information}{8}}
+\@writefile{toc}{\contentsline {section}{\numberline {VII}Conclusion}{8}}
+\newlabel{sec:conclusion}{{VII}{8}}
+\@writefile{toc}{\contentsline {section}{\numberline {VIII}Contributions}{8}}
+\@writefile{toc}{\contentsline {section}{References}{8}}
+\bibcite{llvm}{7}
+\bibcite{green}{8}
+\bibcite{enerJ}{9}
+\bibcite{accept}{10}
+\bibcite{chisel}{11}
+\bibcite{approx}{12}
+\bibcite{rely}{13}

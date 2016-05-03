@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.5.24)  2 MAY 2016 17:58
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.5.24)  3 MAY 2016 17:03
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -219,67 +219,93 @@ File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <7> on input line 73.
+(Font)              <7> on input line 70.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <5> on input line 73.
+(Font)              <5> on input line 70.
 
 [1{/usr/local/texlive/2015/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
 
 
 ]
-<incoherent.pdf, id=11, 555.07375pt x 208.78pt>
+<incoherent.pdf, id=10, 555.07375pt x 208.78pt>
 File: incoherent.pdf Graphic file (type pdf)
  <use incoherent.pdf>
-Package pdftex.def Info: incoherent.pdf used on input line 167.
+Package pdftex.def Info: incoherent.pdf used on input line 215.
 (pdftex.def)             Requested size: 258.0pt x 97.04027pt.
 
-Overfull \hbox (6.0pt too wide) in paragraph at lines 167--168
+Overfull \hbox (6.0pt too wide) in paragraph at lines 215--216
  [][] 
  []
-
-[2 <./incoherent.pdf>] [3] <Heuristic1.pdf, id=21, 365.365pt x 435.6275pt>
-File: Heuristic1.pdf Graphic file (type pdf)
-
-<use Heuristic1.pdf>
-Package pdftex.def Info: Heuristic1.pdf used on input line 303.
-(pdftex.def)             Requested size: 206.39685pt x 246.0901pt.
- <Heuristic2.pdf, id=22, 273.02pt x 606.265pt>
-File: Heuristic2.pdf Graphic file (type pdf)
-
-<use Heuristic2.pdf>
-Package pdftex.def Info: Heuristic2.pdf used on input line 334.
-(pdftex.def)             Requested size: 154.80157pt x 343.75223pt.
- [4 <./Heuristic1.pdf> <./Heuristic2.pdf>]
-<Heuristic3.pdf, id=32, 385.44pt x 395.4775pt>
-File: Heuristic3.pdf Graphic file (type pdf)
- <use Heuristic3.pdf>
-Package pdftex.def Info: Heuristic3.pdf used on input line 356.
-(pdftex.def)             Requested size: 206.39685pt x 211.76845pt.
-
-<result.png, id=33, 1529.715pt x 774.895pt>
-File: result.png Graphic file (type png)
- <use result.png>
-Package pdftex.def Info: result.png used on input line 373.
-(pdftex.def)             Requested size: 490.19843pt x 248.31436pt.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
 
-Underfull \hbox (badness 1642) in paragraph at lines 412--420
-[]\OT1/ptm/m/n/12 As syn-chro-niza-tion ap-prox-i-ma-tion have been
+Underfull \vbox (badness 1072) has occurred while \output is active []
+
+ [2 <./incoherent.pdf>]
+LaTeX Font Info:    Try loading font information for OT1+pcr on input line 300.
+
+ (/usr/local/texlive/2015/texmf-dist/tex/latex/psnfss/ot1pcr.fd
+File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
+)
+Underfull \hbox (badness 1460) in paragraph at lines 292--305
+\OT1/pcr/m/n/12 pthread_ mutex_ unlock() \OT1/ptm/m/n/12 func-tion calls
  []
 
-[5 <./Heuristic3.pdf>]
+[3] <Heuristic1.pdf, id=22, 365.365pt x 435.6275pt>
+File: Heuristic1.pdf Graphic file (type pdf)
+ <use Heuristic1.pdf>
+Package pdftex.def Info: Heuristic1.pdf used on input line 352.
+(pdftex.def)             Requested size: 206.39685pt x 246.0901pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+<Heuristic2.pdf, id=23, 273.02pt x 606.265pt>
+File: Heuristic2.pdf Graphic file (type pdf)
+ <use Heuristic2.pdf>
+Package pdftex.def Info: Heuristic2.pdf used on input line 383.
+(pdftex.def)             Requested size: 154.80157pt x 343.75223pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[4 <./Heuristic1.pdf>] <Heuristic3.pdf, id=30, 385.44pt x 395.4775pt>
+File: Heuristic3.pdf Graphic file (type pdf)
+
+<use Heuristic3.pdf>
+Package pdftex.def Info: Heuristic3.pdf used on input line 432.
+(pdftex.def)             Requested size: 206.39685pt x 211.76845pt.
+ [5 <./Heuristic2.pdf> <./Heuristic3.pdf>]
+<result.png, id=40, 1528.71124pt x 773.89125pt>
+File: result.png Graphic file (type png)
+ <use result.png>
+Package pdftex.def Info: result.png used on input line 449.
+(pdftex.def)             Requested size: 490.19843pt x 248.15802pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <12> on input line 529.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <8> on input line 529.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <6> on input line 529.
+[6]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
-Underfull \hbox (badness 1946) in paragraph at lines 574--576
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [7 <./result.png>]
+Underfull \hbox (badness 1946) in paragraph at lines 779--781
 \OT1/ptm/m/n/9 Mx Many-core Pro-ces-sor, http://www.tilera.com/files/drim[][]
  []
 
 
-Underfull \hbox (badness 3281) in paragraph at lines 578--579
+Underfull \hbox (badness 3281) in paragraph at lines 783--784
 []\OT1/ptm/m/n/9 L Ren-ga-narayana, V Srini-vasan, R Nair, D Prener, C
  []
 
@@ -292,7 +318,7 @@ Missing character: There is no ù in font ptmr7t!
 Missing character: There is no ‚ in font ptmr7t!
 Missing character: There is no Ä in font ptmr7t!
 Missing character: There is no ô in font ptmr7t!
-[6 <./result.png>]
+[8]
 Missing character: There is no ‚ in font ptmr7t!
 Missing character: There is no Ä in font ptmr7t!
 Missing character: There is no ú in font ptmr7t!
@@ -314,27 +340,30 @@ Before submitting the final camera ready copy, remember to:
  uses only Type 1 fonts and that every step in the generation
  process uses the appropriate paper size.
 
-[7
+[9
 
 ] (./proposal.aux) ) 
 Here is how much of TeX's memory you used:
- 2336 strings out of 493089
- 38489 string characters out of 6134842
- 104893 words of memory out of 5000000
- 5821 multiletter control sequences out of 15000+600000
- 31978 words of font info for 59 fonts, out of 8000000 for 9000
+ 2401 strings out of 493089
+ 39315 string characters out of 6134842
+ 105983 words of memory out of 5000000
+ 5873 multiletter control sequences out of 15000+600000
+ 35229 words of font info for 70 fonts, out of 8000000 for 9000
  1144 hyphenation exceptions out of 8191
  37i,7n,23p,335b,234s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2015/texmf-dist/fonts/enc/dvips/base/8r
 .enc}</usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.
-pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/
-local/texlive/2015/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb></usr/local/tex
-live/2015/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2015/
-texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on proposal.pdf (7 pages, 316141 bytes).
+pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.p
+fb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb
+></usr/local/texlive/2015/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/l
+ocal/texlive/2015/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texli
+ve/2015/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb></usr/local/texlive/2015/t
+exmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2015/texmf-dist/
+fonts/type1/urw/times/utmri8a.pfb>
+Output written on proposal.pdf (9 pages, 345943 bytes).
 PDF statistics:
- 68 PDF objects out of 1000 (max. 8388607)
- 47 compressed objects within 1 object stream
+ 86 PDF objects out of 1000 (max. 8388607)
+ 60 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  26 words of extra memory for PDF output out of 10000 (max. 10000000)
 

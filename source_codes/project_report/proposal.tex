@@ -190,12 +190,12 @@ approximation targets. In section \ref{sec:setup}, we provide details on our
 simulation infrastructure and our methodology for evaluation. Section \ref{sec:results}
 shows the results of approximating the suggestions provided by our compiler pass.
 We finally discuss the limitations of this work in section \ref{sec:limitations}
-and conclude with future directions for this work.
+and conclude with future directions for this work in section \ref{sec:conclusion}.
 %shows our results for testing our heuristics against our toy application.  
 %finally Section V presents our conclusion for this work and discussing limitations
 %and potential future work.
 
-\section{System Description} \label{sec:system}
+\section{System Description} \label{sec:system} \label{sec:mech}
 
 We propose an architecture where each core's L1 cache have an incoherent
 portion as well as a coherent part. We didn't limit the size of the 
@@ -585,7 +585,7 @@ importance of data values from data flow analysis. The assumption that
 the usage of a value will be correlated with its importance in the result
 is not always true and, hence, no compiler analysis can get such information. 
 Therefore, it is imperative that the programmer conveys information about 
-precision requirements of certain values to the compiler\cite{approx}\cite{enerj}\cite{rely}.
+precision requirements of certain values to the compiler\cite{approx}\cite{enerJ}\cite{rely}.
 Our compiler pass armed with programmer annotations of precise data can provide a 
 more solid guarantee on program quality by never approximating the precise values.
 
@@ -602,7 +602,7 @@ we can devise more sophesticated heuristics based upon dynamic information to
 find more approximation targets.
  
 
-\section{Conclusion}
+\section{Conclusion}\label{sec:conclusion}
 
 In this work, we took one step further in the direction of applying approximate computing
 to improve the performance of parallel programs. We showed the promise of 
@@ -787,6 +787,9 @@ Simone Campanoni, Glenn Holloway, Gu-Yeon Wei, and David Brooks. “HELIX-UP: Re
 Program Semantics to Unleash Parallelization,” in Proceedings of the 2015 International
 Symposium on Code Generation and Optimization (CGO ’15), February 2015.
 
+\bibitem{coup}
+Guowei Zhang, Webb Horn, and Daniel Sanchez. 2015. Exploiting commutativity to reduce the cost of updates to shared data in cache-coherent systems. In Proceedings of the 48th International Symposium on Microarchitecture (MICRO-48). ACM, New York, NY, USA, 13-25. 
+
 \bibitem{pin}
 Chi-Keung Luk, Robert Cohn, Robert Muth, Harish Patil, Artur Klauser, Geoff Lowney, Steven Wallace, Vijay Janapa Reddi, and Kim Hazelwood. 2005. Pin: building customized program analysis tools with dynamic instrumentation. SIGPLAN Not. 40, 6 (June 2005), 190-200.
 
@@ -808,10 +811,13 @@ Sampson, Adrian, et al. "Accept: A programmer-guided compiler framework for prac
 \bibitem{chisel}
 Sasa Misailovic, Michael Carbin, Sara Achour, Zichao Qi, and Martin C. Rinard. 2014. Chisel: reliability- and accuracy-aware optimization of approximate computational kernels. In Proceedings of the 2014 ACM International Conference on Object Oriented Programming Systems Languages \& Applications (OOPSLA '14) 
 
-\bibitem{stochastic}
+\bibitem{approx}
 Eric Schkufza, Rahul Sharma, and Alex Aiken. “Stochastic optimization of floating-point
 programs with tunable precision,” in Proceedings of the 35th ACM SIGPLAN Conference on
 Programming Language Design and Implementation (PLDI ’14), June 2014.
+
+\bibitem{rely}
+Lakshminarayanan Renganarayana, Vijayalakshmi Srinivasan, Ravi Nair, and Daniel Prener. 2012. Programming with relaxed synchronization. In Proceedings of the 2012 ACM workshop on Relaxing synchronization for multicore and manycore scalability (RACES '12)
 
 \end{thebibliography}
 % that's all folks
