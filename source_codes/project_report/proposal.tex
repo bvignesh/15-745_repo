@@ -106,10 +106,9 @@ a modest error $<$10\% in the program
 
 \section{Introduction}
 
-Since the availability of multicore CPUs is widely made in the
-early 2000s, the concept of parallel computing have been widely accepted 
-and extensively implemented. Developers developed parallel versions
-of algorithms, making uses of all the cores provided. But more often then not
+Parallel computing has become widely accepted 
+and is implemented extensively. Developers developed parallel versions
+of algorithms, making uses of all the cores provided. But more often than not
 there are some shared data accessed and modified by more then one
 thread during the computation. This introduces data movement between
 separate core's cache, which recent research have identified as one of the major
@@ -136,9 +135,9 @@ took another approach by reducing data accesses for some common patterns in
 parallel programs. But no matter if reducing synchronization or data accesses,
 they still have the issue of accessing the same shared data, which still
 have scalability issues. Thus in this paper we propose an architecture which
-have incoherent cache along with the regular coherent cache in the L1 cache
-private to each core. We then introduce special ISA extensions in dealing with
-our proposed incoherent L1 cache.
+has incoherent cache along with the regular coherent cache in the L1 cache
+private to each core. We use special ISA extensions to place data in our incoherent cache.
+
 
 One of the major challenges in Approximate Computing is 
 to target approximations which lie on the pareto-optimal
@@ -146,9 +145,9 @@ boundary of performance and program quality. Compilers prove
 to be useful tools for finding \emph{good} approximation 
 targets that maximize performance while bounding the
 quality degradation of the program. In this paper, we implemented several 
-heuristics as compiler analysis pass that suggests the approximation
-opportunities while simultaneously providing some form of a guarantee on the
-degree of error introduced to the program.
+heuristics that a compiler analysis pass can use to suggest approximation
+opportunities while being cognizant of the error being introduced in the
+program. 
 
 The rest of the paper is organized as follows: In Section II we explain our 
 modeling of the architecture for supporting incoherent cache as well as the
@@ -159,7 +158,7 @@ shows our results for testing our heuristics against our toy application. And
 finally Section V presents our conclusion for this work and discussing limitations
 and potential future work.
 
-\section{Infrastructure}
+\section{System Description}
 
 We propose an architecture where each core's L1 cache have an incoherent
 portion as well as a coherent part. We didn't limit the size of the 
@@ -203,6 +202,7 @@ state of the cacheline (MESI protocol modeled). The simulation
 infrastructure is ready and has been in use for other research
 for quite some time.
 
+%TODO: Junhan, dont describe the simulation infrastructure here. Only describe the architecture over here
 For our purpose we modeled a part of each core's L1 cache as incoherent
 in the simulator, using PIN's routine instrumentation and identifying
 special instructions that we marked in the code (particular blank or 
@@ -567,34 +567,44 @@ find more approximation targets.
 
 \section{Conclusion}
 
-As synchronization approximation have been tried before, we took one step further
-and also approximated the shared variable guarded by synchronizations by proposing
-our own cache incoherent model of the architecture. And in order to find potential
-good values to approximate, we built compiler passes that first identified the 
-shared variables and then applied heuristics to estimate the potential impact of 
-the variable with uses count, path appearance estimate and imbalance between threads.
-Our results showed a decent improvement for our toy applications while sustaining 
-minimal error rate if not approximated too aggressively.
+In this work, we took one step further in the direction of applying approximate computing
+to improve the performance of parallel programs. We showed the promise of 
+approximating data values by introducing an incoherent cache. The main contribution
+of this work was to show that a compiler pass could be used to detect the 
+best approximation targets that would yield good performance improvements at minimal
+program quality degradation. To this end, we designed and tested a couple of 
+heuristics to find the pareto optimal points in the performance-accuracy tradeoff space.
+In conclusion, we believe our work is a useful tool in finding approximation targets
+in the absence of code annotations to mark approximable data and dynamic profile information. 
 
-Limitations on our approach is as we are only doing a static analysis of the program,
-we have no way of knowing any run-time dynamic information. Other systems such as 
-\cite{green}\cite{chisel} have done code profiling to get an idea on the dynamic 
-aspects of the code, \cite{ibm}\cite{helixup}\cite{paraprox}\cite{green} all used 
-run time frameworks to dynamically adjust the approximating rate based on the 
-resulting error rate, rewinding and redoing the precise version of the program 
-if the approximate version's result is not ideal ensuring there is a upper
-bound on the quality degradation of the approximated program. Future work can be 
-done here to also build our own run time framework or integrate with one of the 
-available frameworks to provide the dynamic analysis capabilities and rewind on 
-unacceptable error ratio options that we lack now.
 
-Future work can also be done by letting the programmer write special code annotations
-to tell our compiler which variable is a good candidate for approximation as in
-\cite{enerJ}\cite{accept}\cite{chisel}. The programmer doesn't need to indicate 
-each and every variable to be approximated, by just telling a potential candidate 
-future work can be done using inductions in the ways of \cite{chisel}\cite{stochastic}
-tracking the uses and users of the given variable to find a good approximate 
-candidate.
+
+% And in order to find potential
+%good values to approximate, we built compiler passes that first identified the 
+%shared variables and then applied heuristics to estimate the potential impact of 
+%the variable with uses count, path appearance estimate and imbalance between threads.
+%Our results showed a decent improvement for our toy applications while sustaining 
+%minimal error rate if not approximated too aggressively.
+%
+%Limitations on our approach is as we are only doing a static analysis of the program,
+%we have no way of knowing any run-time dynamic information. Other systems such as 
+%\cite{green}\cite{chisel} have done code profiling to get an idea on the dynamic 
+%aspects of the code, \cite{ibm}\cite{helixup}\cite{paraprox}\cite{green} all used 
+%run time frameworks to dynamically adjust the approximating rate based on the 
+%resulting error rate, rewinding and redoing the precise version of the program 
+%if the approximate version's result is not ideal ensuring there is a upper
+%bound on the quality degradation of the approximated program. Future work can be 
+%done here to also build our own run time framework or integrate with one of the 
+%available frameworks to provide the dynamic analysis capabilities and rewind on 
+%unacceptable error ratio options that we lack now.
+%
+%Future work can also be done by letting the programmer write special code annotations
+%to tell our compiler which variable is a good candidate for approximation as in
+%\cite{enerJ}\cite{accept}\cite{chisel}. The programmer doesn't need to indicate 
+%each and every variable to be approximated, by just telling a potential candidate 
+%future work can be done using inductions in the ways of \cite{chisel}\cite{stochastic}
+%tracking the uses and users of the given variable to find a good approximate 
+%candidate.
 
 \section{Contributions}
 
