@@ -106,37 +106,69 @@ a modest error $<$10\% in the program
 
 \section{Introduction}
 
-Parallel computing has become widely accepted 
-and is implemented extensively. Developers developed parallel versions
-of algorithms, making uses of all the cores provided. But more often than not
-there are some shared data accessed and modified by more then one
-thread during the computation. This introduces data movement between
-separate core's cache, which recent research have identified as one of the major
-impediments to continued performance scaling with increasing core counts. This
-is a big issue in systems with big core counts like the Tilera's TILE-mx100 SoC 
+%Parallel computing has become widely accepted 
+%and is implemented extensively. Developers developed parallel versions
+%of algorithms, making uses of all the cores provided. But more often than not
+%there are some shared data accessed and modified by more then one
+%thread during the computation. This introduces data movement between
+%separate core's cache, which recent research have identified as one of the major
+%impediments to continued performance scaling with increasing core counts. This
+%is a big issue in systems with big core counts like the Tilera's TILE-mx100 SoC 
+%which delivers 100 ARM cores on a single chip\cite{tile}.
+
+With the advent of multicore processors, parallel computing has become
+the norm to utilize all the computational powers of these new chips. 
+While parallel programming has certainly provided performance improvements
+over previously serial versions of code there are still significant 
+challenges in the field. One of the outstanding problems in the field
+has been lack of scalability with increasing number of cores. Research
+in the field of parallel programming has identified data movement and
+other forms communication between cores as the major impediment to 
+performance scaling. This problem is exacerbated by the fact that
+most of the inter-core communication is essential for a correct execution
+of parallel programs. The scalability problem is even more important with
+the advent of systems with bigger core counts like the Tilera's TILE-mx100 SoC
 which delivers 100 ARM cores on a single chip\cite{tile}.
 
-On the other hand, approximating computing have became an emerging topic
-as a growing class of applications, like image processing, data mining 
-and machine learning, are displaying a tolerance to errors in program values.
-By lifting the constraint of a fully precise result, approximate computing
-can offer substantial improved energy efficiency and deliver the resulted
-value much faster. This is ideal in circumstances like embedded systems where
-the provided computing power is quite limited but a result is needed on a real
-time basis like robotic motion scheduling, it is better to yield a sub optimal 
-result as long as a result is given at every time frame then a optimal result
-which is delivered too late to be optimal anyways.
 
-Recent research in approximate computing has turned attention to 
-parallel computing, \cite{ibm} tried to reduce synchronization between cores 
+Approximate computing provides a new vantage point to address the problem
+of poor scalability of parallel programs. Approximating computing has now become
+an established concept
+as a growing class of applications, like image processing, data mining 
+and machine learning, seem to display a tolerance to errors in program values.
+By lifting the constraint of a fully precise result, approximate computing
+can offer substantial improvements in energy efficiency and can tackle the 
+issue of scalability, thereby, increasing performance. Many system 
+scenarios from embedded systems to ware house scale computing systems 
+justify the introduction of approximation to meet their respective 
+energy and power budgets. 
+%This is ideal in circumstances like embedded systems where
+%the provided computing power is quite limited but a result is needed on a real
+%time basis like robotic motion scheduling, it is better to yield a sub optimal 
+%result as long as a result is given at every time frame then a optimal result
+%which is delivered too late to be optimal anyways.
+
+Research in approximate computing has recently turned attention to 
+parallel computing - \cite{ibm} tried to reduce synchronization between cores 
 by removing locks, \cite{helixup} tried relaxing the parallel program 
 semantics like breaking barriers and relaxing sequentiality, \cite{paraprox}
 took another approach by reducing data accesses for some common patterns in
-parallel programs. But no matter if reducing synchronization or data accesses,
-they still have the issue of accessing the same shared data, which still
-have scalability issues. Thus in this paper we propose an architecture which
-has incoherent cache along with the regular coherent cache in the L1 cache
-private to each core. We use special ISA extensions to place data in our incoherent cache.
+parallel programs. Our work is another step in this direction. We ride on the
+same intuition as these previous works that reducing inter-core communication
+can lead to better scalability with increasing core counts. 
+
+In this work, we look at the problem of reducing inter-core communication 
+from the viewpoint of cache coherence. We believe that existing cache coherence
+mechanisms are heavily overprovisioned and, hence, it is our thesis that
+limiting the scope of coherence can provide significant performance improvement
+for non-negligible errors in the program. In a later section, we describe
+our new architecture that provides incoherent caches to improve scalability.
+
+%But no matter if reducing synchronization or data accesses,
+%they still have the issue of accessing the same shared data, which still
+%have scalability issues. Thus in this paper we propose an architecture which
+%has incoherent cache along with the regular coherent cache in the L1 cache
+%private to each core. We use special ISA extensions to place data in our incoherent cache.
 
 
 One of the major challenges in Approximate Computing is 
@@ -149,16 +181,21 @@ heuristics that a compiler analysis pass can use to suggest approximation
 opportunities while being cognizant of the error being introduced in the
 program. 
 
-The rest of the paper is organized as follows: In Section II we explain our 
+The rest of the paper is organized as follows: In Section \ref{sec:system} we explain our 
 modeling of the architecture for supporting incoherent cache as well as the
-extended ISA instructions that we proposed. Section III explains how we implemented
-our compiler passes to identify the potential shared variables that can be
-approximated and heuristics to suggest how to approximate. Section IV
-shows our results for testing our heuristics against our toy application. And 
-finally Section V presents our conclusion for this work and discussing limitations
-and potential future work.
+ISA extensions to use the incoherent cache. Section \ref{sec:compiler} explains how we implemented
+our compiler passes to identify shared variables that could be 
+approximated. We also discuss the heuristics we developed to recommend good 
+approximation targets. In section \ref{sec:setup}, we provide details on our 
+simulation infrastructure and our methodology for evaluation. Section \ref{sec:results}
+shows the results of approximating the suggestions provided by our compiler pass.
+We finally discuss the limitations of this work in section \ref{sec:limitations}
+and conclude with future directions for this work.
+%shows our results for testing our heuristics against our toy application.  
+%finally Section V presents our conclusion for this work and discussing limitations
+%and potential future work.
 
-\section{System Description}
+\section{System Description} \label{sec:system}
 
 We propose an architecture where each core's L1 cache have an incoherent
 portion as well as a coherent part. We didn't limit the size of the 
@@ -242,7 +279,7 @@ storing the shared data in an incoherent cache. The duplication of data
 allows us to run the effect of no coherence on a native machine
 that has coherence.
 
-\section{Compiler Analysis}
+\section{Compiler Analysis} \label{sec:compiler}
 
 In this project, we require compiler support to analysis the potential
 shared variables that could be made incoherent. We used version 3.5.0
@@ -260,7 +297,7 @@ pattern. We restricted our modify operations to be commutative so that
 the merge later would be straightforward. Second, the shared variable
 should be guarded within locks, and as we are restricting ourselves to
 pthread programs, we only have to seek out the 
-\textit{phtread\_ mutex\_ lock()} and \textit{pthread\_ mutex\_ unlock()} 
+\texttt{phtread\_ mutex\_ lock()} and \texttt{pthread\_ mutex\_ unlock()} 
 function calls and assume that the control flow guarded by pairs of
 these two functions are in the critical section. So only access patterns
 of load-modify-store inside the critical section are considered candidates
@@ -268,8 +305,8 @@ for approximation.
 
 After finding the candidates we need to figure out the initial address of
 the candidates, the value given to the load instruction might be generated
-by a \textit{getelementptr} instruction which calculate the offset address
-in an array, by another \textit{load} instruction which loads the address 
+by a \texttt{getelementptr} instruction which calculate the offset address
+in an array, by another \texttt{load} instruction which loads the address 
 in the case of a pointer pointer, or a mixture of both, so in our pass we 
 have to find the initial value used to calculate the address, so if the 
 address is generated by another instruction we keep reverse tracking until 
@@ -405,7 +442,7 @@ variables, this serves as the indicator of the work amount of the current thread
 
 
 
-\section{Experimental Setup and Methodology}
+\section{Experimental Setup and Methodology} \label{sec:setup}
 
 \begin{figure*}[h]
     \centering
@@ -458,7 +495,7 @@ few threads and approximating the rest. The error due to approximation was then
 reported as the percentage difference between the approximate (data-duplicated) version of the 
 program and the precise version of the program. 
 
-\section{Results}
+\section{Results} \label{sec:results}
 
 We now discuss the performance and error results by approximating the
 shared variable identified by our compiler pass based on the heuristics mentioned
@@ -520,7 +557,7 @@ results show that a qualitative estimation of error can be effective in applying
 approximations to programs with sufficient tolerance to errors in program values. 
 
  
-\section{Limitation}
+\section{Limitations of our work} \label{sec:limitations}
 
 There are a few limitations in our method for detecting approximation targets and these
 limitations are useful in understanding the position of our contribution in 
