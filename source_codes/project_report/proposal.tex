@@ -56,23 +56,35 @@ Email: vigneshb@andrew.cmu.edu}}
 % As a general rule, do not put math, special symbols or citations
 % in the abstract
 \begin{abstract}
-Approximating computing is a growing domain as a growing field of
-applications tolerate degradation in the quality of the result in
-exchange for performance. And parallel programming is one of the
-many fields in approximating computing which is gaining attention.
-Parallel programs tends to have scalability issues due to high
-synchronization and data movement costs, while there are previous
-research to deal with approximating synchronization and restricting
-data accesses, none have done with approximate the cache coherence
-to limit data movement between cores. In this paper we are going
-to propose an architecture which have incoherent cache support,
-then we uses the compiler to statically analysis the program to
-determine the potential places the incoherent cache is put into
-use. Our evaluation shows that by using our heuristics we can
-achieve a decent speedup in performance (1.4x) whill maintaining
-a low introduced error ratio ($<$10\%), and in some cases can even
-achieve a performance gain of nearly 2x without much quality
-degradation.
+Approximating computing is a growing domain as the set of important applications
+tolerant to errors in program seems to be widening. More recently, the 
+focus of approximate computing research has turned to improving 
+the performance of parallel programs. While improving the performance
+of parallel programs has been a top of active research for nearly a decade,
+the problem has still not been completely solved because the operations
+that ensure correctness also make scalability to more cores difficult. 
+Approximate computing brings a fresh perspective to the problem by tolerating
+occasional errors thereby enabling reduced inter-core communication. 
+In this work, we study the performance and error implications of cutting a 
+form of inter-core communication - cache coherence. We observed about 2X speedup for
+a modest error $<$10\% in the program
+
+ 
+%Parallel programs tends to have scalability issues due to high
+%synchronization and data movement costs, while there are previous
+%research to deal with approximating synchronization and restricting
+%data accesses, none have done with approximate the cache coherence
+%to limit data movement between cores. In this paper we are going
+%to propose an architecture which have incoherent cache support,
+%then we uses the compiler to statically analysis the program to
+%determine the potential places the incoherent cache is put into
+%use. Our evaluation shows that by using our heuristics we can
+%achieve a decent speedup in performance (1.4x) whill maintaining
+%a low introduced error ratio ($<$10\%), and in some cases can even
+%achieve a performance gain of nearly 2x without much quality
+%degradation.
+
+
 \end{abstract}
 
 % no keywords
@@ -319,7 +331,7 @@ the approximation in this case the threshold of the number of
 uses for a variable, we can determine whether a variable should 
 be approximated or not.
 
-\subsubsection{Quality impact of approximating variables}
+\subsubsection{Quality impact of approximating variables on infrequent branch paths}
 
 We think that the quality impact of a certain shared variable can be estimated
 by analyzing the place of use of the variable down the control flow. If the 
@@ -348,9 +360,36 @@ are constructed, we traverse through the control flow graph and see which variab
 is used only in certain path and which variable is used in all path. Given the
 aggressiveness of approximation, in this case the path frequency where the variable
 would be used, we can then determine which variable should be approximated or not.
-\subsubsection{Detecting the Imbalance in Computation}
-@TODO Vignesh can you put something more here?
-Detect the amount of computation on variables in different threads.
+
+\subsubsection{Detecting the Imbalance in Computation} \label{sec:h3}
+As mentioned in section \ref{sec:mech}, our approximation mechanism involves placing
+approximable data in an incoherent cache. In order to control the amount of 
+error propogating through the program execution, our system provides the programmer 
+with the option of \emph{merging} incoherent data. The merge operation operates upon
+incoherent copies to produce the best approximation to the data had it been coherently
+updated. 
+
+For commutative operations (such as addition, multiplication, etc.) the merge operation 
+can produce a completely precise result since the order of applying updates in a commutative 
+update does not affect the result \cite{coup}. In order to add a dimension of approximation to
+the merge operation, we implemented an approximate version of the merge operation. This idea is 
+similar to the work done in \cite{paraprox} where reduction operation are made cheaper by 
+reducing a subset of the total values and approximating the rest. 
+
+Given such an approximate merge operation, we wanted our compiler pass to give us 
+an idea of how much a particular variable could be approximated. In other words, we 
+wanted a quantitative summary of the number of operands required by the approximate 
+merge instruction for each approximation target in the program. We designed a heuristic 
+to measure this quantity.
+
+Our heuristic searches for imbalance in computations in different threads that could be
+detected statically. For example in figure \ref{fig:h3}, the variable x is used more 
+aggressively in the threads that are encapsulated by the rectangle than in other threads.
+We can say that for this example variable x only requires the contribution of the first
+two threads. Hence, our merge operation can factor in the results of the computation of
+the first two threads alone. Only accounting for a subset of the values, allows the 
+system to perform the merge operation faster at the expense of ignoring the results
+of the other threads with few computations on the shared variable. 
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.40\textwidth]{Heuristic3.pdf}
@@ -366,7 +405,7 @@ variables, this serves as the indicator of the work amount of the current thread
 
 
 
-\section{Evaluation}
+\section{Experimental Setup and Methodology}
 
 \begin{figure*}[h]
     \centering
@@ -388,24 +427,143 @@ computations is not just single instruction multiple data (SIMD) type, we gave
 the \textit{pthread\_ create()} for each thread a different work function
 with different work loads inside each of them.
 
-We evaluated our results by first running the original application directly for
-its intended output, then gave it to our PIN simulator to see the cycle
-counts for running this application. After having the results for the precise
-version of the program, we gave it to our shared variables finding pass and
-passed it along to its corresponding heuristic pass. Upon using the information
-from the heuristic pass we tested various levels of approximation aggressiveness
-generating the various approximated version of the program into the performance
-and error evaluation version. We then gave the performance version to our simulator
-to get the cycle count of the approximated version and run the error version to
-see the approximated result and finally compared it with the results of the
-original version.
+%We evaluated our results by first running the original application directly for
+%to get the precise output, then gave it to our PIN simulator to see the cycle
+%counts for running this application.  After having the results for the precise
+%version of the program, we gave it to our shared variables finding pass and
+%passed it along to its corresponding heuristic pass. Upon using the information
+%from the heuristic pass we tested various levels of approximation aggressiveness
+%generating the various approximated version of the program into the performance
+%and error evaluation version. We then gave the performance version to our simulator
+%to get the cycle count of the approx
 
-The results of our evaluation can be seen in figure \ref{fig:result}. As we can
-see, the performance ...@TODO Vignesh can you put in the results for the
-performance and error here?
+For the performance results, we used a PIN based simulator that
+implemented a simple processor model. All non-memory instructions were assumed to
+finish in one cycle. For memory instructions, our simulator modelled a detailed
+three level cache heirarchy with the L1 and L2 being private to each core. We also 
+modeled a directory based MESI cache coherence protocol. The cycle costs for 
+accessing the memory heirarchy was based on average values reported for the 
+Nehalem microarchitecture. In order to implement placing data in the incoherent cache, 
+we had to slightly modify original code to insert special calls that our Pintool would
+understand. The performance gain was then reported by computing the ratio of cycles (as
+reported by the simulator) of the original version of the code over the modified (approximate) version. 
 
-@TODO Vignesh, can you also discuss a bit about the results here? Like the reasons
-for the performance and error gains? What is considered acceptable etc?
+In order to calculate the error induced by incoherence, we used the concept of 
+data duplication. Since there was no way to switch off coherence on our native machines, we
+simulated the effect of incoherence by splitting the original shared variable as a thread
+private copy. The operations on these private copies then are logically equivalent to cores
+operating on incoherent data from their private caches. We implemented the merge operation discussed in 
+section \ref{sec:h3} in the code by only combining the actual results of a 
+few threads and approximating the rest. The error due to approximation was then 
+reported as the percentage difference between the approximate (data-duplicated) version of the 
+program and the precise version of the program. 
+
+\section{Results}
+
+We now discuss the performance and error results by approximating the
+shared variable identified by our compiler pass based on the heuristics mentioned
+in the previous section
+
+Figure \ref{fig:result} shows the performance and error plots for applying each
+heuristic independently. As can be seen in the figure, applying heuristic 1 and 2
+gives considerable improvement in the parallel portion of the program by speeding 
+up the computations by upto 3.5 times the precise version of the program. We observe
+the same performance improvement for these two heuristics because the parallel 
+part of the test program was the same for both experiments. The performance benefit
+in this case can be attributed to the reduced data movement between cores in the approximate
+version of the program. A reduction in the coherence traffic is also a contributor in the 
+performance speedup. The performance results also indicate that increasing the approximation 
+by placing more data in the incoherent cache results in greater speedup which is an 
+intuitive result. 
+
+The difference in the test programs for heuristics 1 and 2 was in the post parallel phase 
+of the computation. For heuristic 1, the post parallel phase only involved simple uses 
+of the shared variable as described in figure \ref{fig:h1}. The error plots for heuristic 1
+illustrates the increasing disadvantage of keeping more data in the incoherent cache with
+error rates of upto 50\%. These plots show the performance-accuracy tradeoff space that is
+opened up by approximate computing.
+
+For the error induced by approximating the suggestions of heuristic 2 we present a different 
+view of error data. The test program for heuristic 2 had computations in which some variables 
+were only used in branches of the code which were executed very infrequently. An example computation
+can be seen in figure \ref{fig:h2}. We report the distribution of error for approximating 
+a variable that only appeared in infrequently executed branches as observed in 100 runs of the
+experiment. As can be seen in the 
+error plot for heuristic 2, we observe a very small error ($<$6\%) most of the time (85\%).
+Larger values of errors are only observed with a small frequency and, hence, the expected
+value of error due to approximation is expected to be low.
+
+The test program for testing the efficacy of heuristic 3 was similar to the example depicted
+in figure \ref{fig:h3}. The approximation in this program involved operating upon the
+result of a subset of the total threads and approximating the results of other threads. We 
+tested the program for cases when a third of the threads were merged (titled low approximation)
+and when two thirds of the thread values were merged (titled high approximation). The cycle
+cost for the merge operation was also adjusted to account for faster merge operations in
+the high approximation case. The performance benefit of these two approximations is not 
+significantly high relative to the other cases we have seen so far (only 
+12\% performance improvement of high approximation over precise version). An explanation 
+of this behavior could be that the merge operation is not a significant bottleneck in 
+the parallel program and, hence, optimizing it yielded minimal performance improvement. 
+This result shows that the performance improvement is maximum when data movement is 
+limited as evidenced by the results for heuristics 1 and 2. The error plot for heuristic 3 
+shows significant error degradation even for low level of approximation. This result
+was expected since we are completely ignoring the contribution of a few threads in the 
+computation of the approximate value. In summary, our results show that tuning the 
+number of operands in the approximate merge operation can be dangerous since it causes
+significant errors in the program for marginal performance improvement
+
+The main theme that we wished to portray in all our results was that the 
+performance and quality degradation of that we observed in our programs were in
+the same direction as predicted by our three heuristics. Even though our heuristics cannot
+select approximation targets by reasoning the quality degradation quantitatively, our 
+results show that a qualitative estimation of error can be effective in applying 
+approximations to programs with sufficient tolerance to errors in program values. 
+
+ 
+\section{Limitation}
+
+There are a few limitations in our method for detecting approximation targets and these
+limitations are useful in understanding the position of our contribution in 
+relation to other work done in approximate computing. The two primary limitations 
+of our work are:
+\begin{itemize}
+\item The inability to provide quality guarantees
+\item The inability to reason about dynamic aspects of programs
+\end{itemize}
+
+\subsection{Quality guarantees}
+
+In this work, we only focus on finding the approximation targets by
+qualitative reasoning. We use heuristics to detect approximation targets that 
+would, hopefully, not cause too much quality degradation. However, this heuristic
+is not guaranteed to work in all cases. One could imagine examples wherein certain
+data are absolutely critical to program correctness. Additionally, it is quite possible
+that these data values are only accessed a few times in the program's lifetime (this
+is a good approximation target as per our heurstic). For example, a pointer value 
+should not be approximated even if it altered just once in the program since that
+might result in a segmentation fault. 
+
+The root cause of this problem is our inability to tease out information of 
+importance of data values from data flow analysis. The assumption that
+the usage of a value will be correlated with its importance in the result
+is not always true and, hence, no compiler analysis can get such information. 
+Therefore, it is imperative that the programmer conveys information about 
+precision requirements of certain values to the compiler\cite{approx}\cite{enerj}\cite{rely}.
+Our compiler pass armed with programmer annotations of precise data can provide a 
+more solid guarantee on program quality by never approximating the precise values.
+
+\subsection{Dynamic information}
+
+Our compiler passes work for programs with very specific characteristics (the patterns
+we search for in each of our heuristics). Our analysis ignores the effects of 
+dynamic code information such as loops and branch hit rates. The importance of 
+a value finally depends upon the number of times it is used and manipulated 
+during an actual run of the program. Since our pass does not have access to 
+dynamic information (such as from profiling) we cannot find approximation targets that
+are hidden inside loops. With the help of information from profiling the program 
+we can devise more sophesticated heuristics based upon dynamic information to 
+find more approximation targets.
+ 
 
 \section{Conclusion}
 
